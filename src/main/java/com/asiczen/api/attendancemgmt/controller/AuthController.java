@@ -72,12 +72,6 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-
-//		return ResponseEntity.ok(new JwtResponse(jwt, 
-//												 userDetails.getId(), 
-//												 userDetails.getUsername(), 
-//												 userDetails.getEmail(), 
-//												 roles));
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		 "User validate Successfully",

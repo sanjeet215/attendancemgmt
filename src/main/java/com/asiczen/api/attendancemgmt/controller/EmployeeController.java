@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ public class EmployeeController {
 	
 	@PostMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> createOrganization(@Valid @RequestBody Employee emp){
+	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody Employee emp){
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 																					   "Employee Created Successfully",
@@ -45,20 +46,31 @@ public class EmployeeController {
 	/* Get all Employees */	
 	@GetMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> getAllOrganizations(){
+	public ResponseEntity<ApiResponse> getAllEmployees(){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																				  "Organization Created Successfully",
 																				  empService.getAllEmployees()));
 	}
 	
-	/*Update Organization*/
+	/*Update Employee*/
 	@PutMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> updateOrganization(@Valid @RequestBody Employee emp){
+	public ResponseEntity<ApiResponse> updateEmployee(@Valid @RequestBody Employee emp){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				  											 "Organization Created Successfully",
 				  											empService.updateEmployee(emp)));
 		
+	}
+	
+	
+	/* Get Employee By Id */
+	
+	@GetMapping("/emp/{id}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	public ResponseEntity<ApiResponse> retrieveEmp(@PathVariable long id){
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Employee with id: "+id+" retrieved successfully",
+																		  empService.getEmployeeById(id)));
 	}
 	
 }

@@ -6,13 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "leavetypes")
+@Table(name = "leavetypes", uniqueConstraints = @UniqueConstraint(columnNames = { "org_id", "leaveTypeName" }))
 public class LeaveTypes extends AuditModel {
 
 	private static final long serialVersionUID = -1040317321318112432L;
@@ -23,11 +24,12 @@ public class LeaveTypes extends AuditModel {
 
 	@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters")
 	@NotEmpty(message = "Organization Id is required/Can't be blank")
-	@Column(name = "org_id", unique = true)
+	@Column(name = "org_id")
 	private String orgId;
 
 	@Size(min = 5, max = 100, message = "Leave Type should be between 5 to 100 characters")
 	@NotEmpty(message = "Leave Type is required/Can't be blank")
+	@Column(unique = true)
 	private String leaveTypeName;
 
 	@Min(value = 0, message = "The value must be positive")

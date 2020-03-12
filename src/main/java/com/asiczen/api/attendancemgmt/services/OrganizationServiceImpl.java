@@ -31,7 +31,22 @@ public class OrganizationServiceImpl {
 			logger.error("Organization Id" + org.getOrganizationDisplayName() + "already exist in Database");
 			throw new ResourceAlreadyExistException(org.getOrganizationDisplayName());
 		}
+		
+		Optional<Organization> orgByContactEmailId = orgRepo.findBycontactEmailId(org.getContactEmailId());
+		
+		if (orgByContactEmailId.isPresent()) {
+			logger.error("Organization ContactEmailId" + org.getContactEmailId() + "already exist in Database");
+			throw new ResourceAlreadyExistException(org.getContactEmailId());
+		}
+		
+		Optional<Organization> orgByorganizationcontact = orgRepo.findByorganizationcontact(org.getOrganizationcontact());
 
+		if(orgByorganizationcontact.isPresent()) {
+			logger.error("Phone Number must be Unique" + org.getOrganizationcontact());
+			throw new ResourceAlreadyExistException(org.getOrganizationcontact());
+		}
+		
+		
 		return orgRepo.save(org);
 	}
 
@@ -48,7 +63,7 @@ public class OrganizationServiceImpl {
 
 		Optional<Organization> organization = orgRepo.findById(newCompany.getId());
 		
-		if (! organization.isPresent())
+		if (!organization.isPresent())
 			throw new ResourceNotFoundException("Organization with Id :" + newCompany.getId() + " not Found");
 		
 		return orgRepo.findById(newCompany.getId()).map(company -> {

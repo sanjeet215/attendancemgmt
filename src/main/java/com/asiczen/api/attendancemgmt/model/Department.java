@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -22,19 +23,19 @@ public class Department extends AuditModel {
 
 	@NotEmpty(message = "Department Name is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "deptName should be between 5 to 10 characters")
-	@Column(name = "deptName", unique = true)
+	@Column(name = "deptName")
 	private String deptName;
 
 	@NotEmpty(message = "Department Description is required/Can't be blank")
 	@Size(min = 5, max = 20, message = "Department Description should be between 5 to 20 characters")
-	@Column(name = "description", unique = true)
+	@Column(name = "description")
 	private String description;
 
 	@NotEmpty(message = "Organization Id is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters")
 	private String orgId;
 
-	@NotEmpty(message = "Department status can't be blank")
+	@NotNull
 	private boolean status;
 
 	public Department() {
