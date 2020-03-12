@@ -74,13 +74,23 @@ public class EmpServiceImpl {
 		empRepo.delete(emp);
 	}
 
-	
 	public Employee getEmployeeById(long id) {
 		Optional<Employee> emp = empRepo.findById(id);
-		
-		if(!emp.isPresent())
-			throw new ResourceNotFoundException("Employee not Found with id: "+ id);
-		
+
+		if (!emp.isPresent())
+			throw new ResourceNotFoundException("Employee not Found with id: " + id);
+
 		return emp.get();
+	}
+
+	
+	/*Count of Employees By Organization Id */
+	public Long countEmployeebyOrganization(String orgId, boolean status) {
+		Optional<Long> count = empRepo.countByOrgIdAndEmpStatus(orgId, status);
+		if (!count.isPresent()) {
+			return 0L;
+		} else {
+			return count.get();
+		}
 	}
 }

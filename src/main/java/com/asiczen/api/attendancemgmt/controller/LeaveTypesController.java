@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +39,17 @@ public class LeaveTypesController {
 	}
 	
 	@GetMapping("/leavetype")
-	public ResponseEntity<ApiResponse> getAllOrganizations(){
+	public ResponseEntity<ApiResponse> getAllLeaveTypes(){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 														 "LeaveTypes Extracted Successfully",
 														 leaveTypeService.getAllLeavetypes()));
 	}
+	
+	@GetMapping("/leavetype/{orgid}")
+	public ResponseEntity<ApiResponse> getLeaveTypesByOrgId(@Valid @PathVariable String orgid){
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				 														"LeaveTypes Extracted Successfully",
+				 														leaveTypeService.getLeaveTypesByOrganization(orgid)));
+	}
+	
 }

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,7 @@ import com.asiczen.api.attendancemgmt.payload.response.JwtResponse;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
+import com.asiczen.api.attendancemgmt.services.EmailServiceImpl;
 import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
 
 
@@ -44,6 +46,13 @@ import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+	
+	@Value("${asiczen.from.email}")
+	private String mailFrom;
+	
+	@Value("${asiczen.from.userregn}")
+	private String mailcontent;
+	
 	@Autowired
 	AuthenticationManager authenticationManager;
 
@@ -58,6 +67,9 @@ public class AuthController {
 
 	@Autowired
 	JwtUtils jwtUtils;
+	
+	@Autowired
+	EmailServiceImpl emailService;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -130,8 +142,13 @@ public class AuthController {
 
 		user.setRoles(roles);
 		//userRepository.save(user);
-
 		//return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		
+		String credentials = "User Name: "+user.getUsername()+ "\nPassword: "+signUpRequest.getPassword();
+		
+		
+		emailService.emailData(mailFrom,user.getEmail(), mailcontent+credentials, "User registered successfully!");
+		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 															  				  "User registered successfully!",
 															  				  userRepository.save(user)));

@@ -21,7 +21,7 @@ public class DeptServiceImpl {
 	@Autowired
 	DepartmentRepository deptRepo;
 	
-	/* Add Organization */
+	/* Add Department */
 
 	public Department addDepartment(Department dept) {
 
@@ -47,6 +47,7 @@ public class DeptServiceImpl {
 		return deptRepo.save(dept);
 	}
 
+	//Get All Departments
 	public List<Department> getAllDepartments() {
 
 		if (deptRepo.findAll().isEmpty()) {
@@ -56,6 +57,7 @@ public class DeptServiceImpl {
 		}
 	}
 	
+	//Update Department
 	public Department updateDepartment(Department newDept) {
 		Optional<Department> department = deptRepo.findById(newDept.getDeptId());
 		if (!department.isPresent())
@@ -65,13 +67,29 @@ public class DeptServiceImpl {
 			
 			ndepartment.setDeptName(newDept.getDeptName());
 			ndepartment.setDescription(newDept.getDescription());
-			ndepartment.setOrgId(newDept.getOrgId());
+			//ndepartment.setOrgId(newDept.getOrgId());
 			ndepartment.setStatus(newDept.isStatus());
 
 			return deptRepo.save(ndepartment);
 
 		}).orElseThrow(() -> new ResourceNotFoundException("Department ID "+ newDept.getDeptId() + "not found"));
 
+	}
+	
+	
+	
+	//Department Operation by Organization Id
+	public Long countDepartmentbyOrg(String orgid) {
+	
+		Optional<Long> count = deptRepo.countByOrgIdAndStatus(orgid, true);
+		
+		if(!count.isPresent()) {
+			return 0L;
+		} else {
+			return count.get();
+		}
+		
+		
 	}
 
 }

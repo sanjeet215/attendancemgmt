@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.model.Employee;
@@ -67,10 +68,21 @@ public class EmployeeController {
 	
 	@GetMapping("/emp/{id}")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
-	public ResponseEntity<ApiResponse> retrieveEmp(@PathVariable long id){
+	public ResponseEntity<ApiResponse> retrieveEmp(@Valid @PathVariable long id){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		 "Employee with id: "+id+" retrieved successfully",
 																		  empService.getEmployeeById(id)));
+	}
+	
+	/*Active Users*/
+	@GetMapping("/emp/count")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	public ResponseEntity<ApiResponse> countEmpByOrganization(@Valid @RequestParam String orgid){
+		logger.debug("Incoming Organization id: "+orgid);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+														   				 "Employee Count extracted",
+														   				 empService.countEmployeebyOrganization(orgid, true)));
 	}
 	
 }

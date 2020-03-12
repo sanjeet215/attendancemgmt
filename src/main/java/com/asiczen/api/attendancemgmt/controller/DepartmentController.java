@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.model.Department;
@@ -63,4 +64,15 @@ public class DepartmentController {
 																		 deptService.getAllDepartments()));
 	}
 	
+	
+	@GetMapping("/dept/count")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getDepartmentCount(@Valid @RequestParam String orgid){
+		
+		logger.debug("Incoming Organization id: "+orgid);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		"Department Count extracted",
+																		deptService.countDepartmentbyOrg(orgid)));
+	}
 }
