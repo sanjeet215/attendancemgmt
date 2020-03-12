@@ -10,9 +10,9 @@ import com.asiczen.api.attendancemgmt.model.Organization;
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
 	
-	boolean existsByorgId(String orgId);
+	boolean existsByorganizationDisplayName(String orgId);
 	
-	Optional<Organization> findById(long id);
+	Optional<Organization> findById(Long id);
 	
-	Optional<Organization> findByorgId(String orgId);
+	Optional<Organization> findByorganizationDisplayName(String orgId);
 }

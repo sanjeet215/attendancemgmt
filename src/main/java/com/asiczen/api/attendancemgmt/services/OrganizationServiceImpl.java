@@ -25,11 +25,11 @@ public class OrganizationServiceImpl {
 
 	public Organization addOrganization(Organization org) {
 
-		Optional<Organization> organization = orgRepo.findByorgId(org.getOrgId());
+		Optional<Organization> organization = orgRepo.findByorganizationDisplayName(org.getOrganizationDisplayName());
 
 		if (organization.isPresent()) {
-			logger.error("Organization Id" + org.getOrgId() + "already exist in Database");
-			throw new ResourceAlreadyExistException(org.getOrgId());
+			logger.error("Organization Id" + org.getOrganizationDisplayName() + "already exist in Database");
+			throw new ResourceAlreadyExistException(org.getOrganizationDisplayName());
 		}
 
 		return orgRepo.save(org);
@@ -53,11 +53,15 @@ public class OrganizationServiceImpl {
 		
 		return orgRepo.findById(newCompany.getId()).map(company -> {
 
-			company.setOrgId(newCompany.getOrgId());
-			company.setOrgName(newCompany.getOrgName());
-			company.setOrgDescription(newCompany.getOrgDescription());
-			//company.setRegDate(newCompany.getRegDate());
-			company.setStatus(newCompany.isStatus());
+			company.setOrganizationDisplayName(newCompany.getOrganizationDisplayName());
+			company.setOrganizationDescription(newCompany.getOrganizationDescription());
+			company.setRegDate(newCompany.getRegDate());
+			company.setOrganizationLocation(newCompany.getOrganizationLocation());
+			company.setStatus(newCompany.getStatus());
+			company.setContactPersonName(newCompany.getContactPersonName());
+			company.setContactEmailId(newCompany.getContactEmailId());
+			company.setOrganizationcontact(newCompany.getOrganizationcontact());
+			
 			return orgRepo.save(company);
 
 		}).orElseThrow(() -> new ResourceNotFoundException("Orgnization Id : "+ newCompany.getId() + "not found"));
