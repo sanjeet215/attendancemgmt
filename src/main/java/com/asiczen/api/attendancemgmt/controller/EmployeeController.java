@@ -1,5 +1,8 @@
 package com.asiczen.api.attendancemgmt.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
+import com.asiczen.api.attendancemgmt.payload.response.EmpDeptCountResponse;
+import com.asiczen.api.attendancemgmt.services.DeptServiceImpl;
 import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,6 +36,10 @@ public class EmployeeController {
 	
 	@Autowired
 	EmpServiceImpl empService;
+	
+	
+	@Autowired
+	DeptServiceImpl deptService;
 	
 	/* Create New Employee */
 	
@@ -83,6 +92,36 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 														   				 "Employee Count extracted",
 														   				 empService.countEmployeebyOrganization(orgid, true)));
+	}
+	
+	
+	@GetMapping("/count")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	public ResponseEntity<ApiResponse> countByOrganization(@Valid @RequestParam String orgid){
+		logger.debug("Incoming Organization id: "+orgid);
+		
+		List<EmpDeptCountResponse> count = new ArrayList<EmpDeptCountResponse>();
+		
+		try {
+				EmpDeptCountResponse empResponse = new EmpDeptCountResponse();
+				empResponse.setCountType("EmpCount");
+				empResponse.setCount(empService.countEmployeebyOrganization(orgid, true));
+				count.add(empResponse);
+				
+				EmpDeptCountResponse deptResponse = new EmpDeptCountResponse();
+				deptResponse.setCountType("DeptCount");
+				deptResponse.setCount(deptService.countDepartmentbyOrg(orgid));
+				count.add(deptResponse);
+				
+				
+		}catch(Exception ep) {
+			logger.error("Error in gettting the count");
+		}
+		
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+														   				 "Employee Count extracted",
+														   				 count));
 	}
 	
 }

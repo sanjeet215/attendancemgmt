@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.User;
+import com.asiczen.api.attendancemgmt.payload.request.ChangePasswordRequest;
 import com.asiczen.api.attendancemgmt.payload.request.PasswordResetRequest;
 import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
@@ -19,29 +20,28 @@ import com.asiczen.api.attendancemgmt.utils.RandomPwdGenerator;
 public class ForgotPasswordServiceImpl {
 
 	private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordServiceImpl.class);
-	
+
 	@Value("${asiczen.from.email}")
 	private String mailFrom;
-	
+
 	@Value("${asiczen.from.content}")
 	private String mailcontent;
-	
+
 	@Value("${asiczen.from.subject}")
 	private String mailsubject;
-	
 
 	@Autowired
 	UserRepository userRepository;
 
 	@Autowired
 	EmployeeRepository empRepo;
-	
+
 	@Autowired
 	PasswordEncoder encoder;
-	
+
 	@Autowired
 	RandomPwdGenerator pwdGenerator;
-	
+
 	@Autowired
 	EmailServiceImpl emailService;
 
@@ -60,13 +60,12 @@ public class ForgotPasswordServiceImpl {
 				logger.debug("Both email Id and Phone numbers are matching");
 
 				User user = userRepository.findByEmail(request.getEmailId()).get();
-				
+
 				String randomPassword = pwdGenerator.generateRandomPassword();
 				user.setPassword(encoder.encode(randomPassword));
 				userRepository.save(user);
-				//emailService.emailData(mailFrom, user.getEmail(), mailcontent+randomPassword, mailsubject);
-				emailService.emailData(mailFrom, "sanjeet215@gmail.com", mailcontent+randomPassword, mailsubject);
-				
+			    emailService.emailData(mailFrom, user.getEmail(), mailcontent+randomPassword,mailsubject);
+
 				logger.info("Password Reset will be done.");
 			}
 
@@ -75,6 +74,26 @@ public class ForgotPasswordServiceImpl {
 			throw new ResourceNotFoundException("User Doesn't exist with emailId: " + request.getEmailId());
 		}
 
+	}
+
+	public String changePassword(ChangePasswordRequest request) {
+
+		if (userRepository.existsByEmail(request.getEmailId()) && empRepo.existsByempEmailId(request.getEmailId())) {
+
+			User user = userRepository.findByEmail(request.getEmailId()).get();
+			String password = request.getPassword();
+			user.setPassword(password);
+			userRepository.save(user);
+
+			emailService.emailData(mailFrom, user.getEmail(),
+					"Password Changed Successfully. Please enter new password.", "Password Changed Successfully.");
+
+			return "Password changedd Successful";
+
+		} else {
+
+			throw new ResourceNotFoundException("User Doesn't exist with emailId: " + request.getEmailId());
+		}
 	}
 
 }
