@@ -67,9 +67,13 @@ public class ForgotPasswordServiceImpl {
 			    emailService.emailData(mailFrom, user.getEmail(), mailcontent+randomPassword,mailsubject);
 
 				logger.info("Password Reset will be done.");
+				return "Password Reset Successful";
+			} else {
+				
+				throw new ResourceNotFoundException("User Doesn't exist with phone no: " + request.getPhoneNo());
 			}
 
-			return "Password Reset Successful";
+			
 		} else {
 			throw new ResourceNotFoundException("User Doesn't exist with emailId: " + request.getEmailId());
 		}
@@ -82,7 +86,7 @@ public class ForgotPasswordServiceImpl {
 
 			User user = userRepository.findByEmail(request.getEmailId()).get();
 			String password = request.getPassword();
-			user.setPassword(password);
+			user.setPassword(encoder.encode(password));
 			userRepository.save(user);
 
 			emailService.emailData(mailFrom, user.getEmail(),

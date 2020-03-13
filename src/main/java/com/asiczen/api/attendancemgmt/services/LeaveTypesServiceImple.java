@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
 import com.asiczen.api.attendancemgmt.repository.LeaveTypesReposiory;
@@ -22,6 +23,13 @@ public class LeaveTypesServiceImple {
 
 	
 	public LeaveTypes postLeaves(LeaveTypes leavetype) {
+		
+		Optional<LeaveTypes> leaveTypeNames = leaveTypeRepo.findByLeaveTypeNameAndOrgId(leavetype.getLeaveTypeName(), leavetype.getOrgId());
+		
+		if(leaveTypeNames.isPresent())
+		    throw new ResourceAlreadyExistException("Leave type already exists."+leavetype.getOrgId()+"_"+leavetype.getLeaveTypeName());
+		
+		
 		return leaveTypeRepo.save(leavetype);
 	}
 	
@@ -32,9 +40,9 @@ public class LeaveTypesServiceImple {
 
 		Optional<List<LeaveTypes>> leavetypes = leaveTypeRepo.findByorgIdIs(orgId);
 
-		if (leavetypes.isPresent()) {
+		if (!leavetypes.isPresent()) {
 			logger.error("There are no leave types created for organization");
-			throw new ResourceNotFoundException("No leave types are created fororganization id: " + orgId);
+			throw new ResourceNotFoundException("No leave types are created for organization id: " + orgId);
 		}
 			
 

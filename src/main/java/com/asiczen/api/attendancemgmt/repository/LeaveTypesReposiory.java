@@ -14,6 +14,8 @@ public interface LeaveTypesReposiory extends JpaRepository<LeaveTypes, Long> {
 	Optional<List<LeaveTypes>> findByorgIdIs(String orgId);
 	
 	Optional<List<LeaveTypes>> findByLeaveTypeNameAndOrgIdAndStatus(String leaveType,String ogid,boolean status);
+	
+	Optional<LeaveTypes> findByLeaveTypeNameAndOrgId(String leaveType,String ogid);
 
 	Optional<List<LeaveTypes>> findByOrgIdAndStatus(String orgid,boolean status);
 	

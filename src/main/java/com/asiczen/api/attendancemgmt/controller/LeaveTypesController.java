@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
@@ -38,15 +39,17 @@ public class LeaveTypesController {
 																leaveTypeService.postLeaves(leaveTypes)));
 	}
 	
-	@GetMapping("/leavetype")
-	public ResponseEntity<ApiResponse> getAllLeaveTypes(){
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-														 "LeaveTypes Extracted Successfully",
-														 leaveTypeService.getAllLeavetypes()));
-	}
+//	@GetMapping("/leavetype")
+//	public ResponseEntity<ApiResponse> getAllLeaveTypes(){
+//		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+//														 "LeaveTypes Extracted Successfully",
+//														 leaveTypeService.getAllLeavetypes()));
+//	}
 	
-	@GetMapping("/leavetype/{orgid}")
-	public ResponseEntity<ApiResponse> getLeaveTypesByOrgId(@Valid @PathVariable String orgid){
+	
+	@GetMapping("/leavetype")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getLeaveTypesByOrgId(@Valid @RequestParam String orgid){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				 														"LeaveTypes Extracted Successfully",
 				 														leaveTypeService.getLeaveTypesByOrganization(orgid)));
