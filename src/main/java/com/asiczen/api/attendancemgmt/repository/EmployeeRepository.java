@@ -11,7 +11,7 @@ import com.asiczen.api.attendancemgmt.model.Employee;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 
-	Employee findByempEmailId(String emailId);
+	Optional<Employee> findByempEmailId(String emailId);
 	
 	Boolean existsByempEmailId(String emailId);
 	

@@ -93,4 +93,21 @@ public class EmpServiceImpl {
 			return count.get();
 		}
 	}
+	
+	
+	/* Get Employee by email Id for MY Profile*/
+	
+	public Employee findByEmailid(String emailId) {
+
+		Optional<Employee> emp = empRepo.findByempEmailId(emailId);
+
+		if (!emp.isPresent()) {
+			throw new ResourceNotFoundException("Employee with email Id :" + emailId + "not found");
+		} else {
+			return emp.get();
+		}
+
+	}
+	
+	
 }

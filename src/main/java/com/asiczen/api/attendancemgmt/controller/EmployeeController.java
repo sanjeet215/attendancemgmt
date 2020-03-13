@@ -74,7 +74,6 @@ public class EmployeeController {
 	
 	
 	/* Get Employee By Id */
-	
 	@GetMapping("/emp/{id}")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
 	public ResponseEntity<ApiResponse> retrieveEmp(@Valid @PathVariable long id){
@@ -82,6 +81,16 @@ public class EmployeeController {
 																		 "Employee with id: "+id+" retrieved successfully",
 																		  empService.getEmployeeById(id)));
 	}
+	
+	
+	@GetMapping("/emp/profile")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	public ResponseEntity<ApiResponse> retrieveEmpbyEmail(@Valid @PathVariable String emailid){
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Employee with id: "+emailid+" retrieved successfully",
+																		  empService.findByEmailid(emailid)));
+	}
+	
 	
 	/*Active Users*/
 	@GetMapping("/emp/count")
@@ -95,6 +104,8 @@ public class EmployeeController {
 	}
 	
 	
+	
+	/* Returns count of both Emplyees and Departments by Organization */
 	@GetMapping("/count")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
 	public ResponseEntity<ApiResponse> countByOrganization(@Valid @RequestParam String orgid){

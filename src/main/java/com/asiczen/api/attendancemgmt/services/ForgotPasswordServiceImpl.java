@@ -1,5 +1,7 @@
 package com.asiczen.api.attendancemgmt.services;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +57,8 @@ public class ForgotPasswordServiceImpl {
 
 		if (userRepository.existsByEmail(request.getEmailId()) && empRepo.existsByempEmailId(request.getEmailId())) {
 
-			Employee emp = empRepo.findByempEmailId(request.getEmailId());
-			if (emp.getPhoneNo().equalsIgnoreCase(request.getPhoneNo())) {
+			Optional<Employee> emp = empRepo.findByempEmailId(request.getEmailId());
+			if (emp.get().getPhoneNo().equalsIgnoreCase(request.getPhoneNo())) {
 				logger.debug("Both email Id and Phone numbers are matching");
 
 				User user = userRepository.findByEmail(request.getEmailId()).get();
