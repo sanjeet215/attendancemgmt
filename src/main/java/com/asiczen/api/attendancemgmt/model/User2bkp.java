@@ -6,13 +6,12 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username"),
 		@UniqueConstraint(columnNames = "email") })
-public class User {
+public class User2bkp {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -30,25 +29,18 @@ public class User {
 	@Size(max = 120)
 	private String password;
 
-	@NotEmpty(message = "Organization Id is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters")
-	private String orgId;
-
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
-	public User() {
+	public User2bkp() {
 	}
 
-	public User(String username, String email, String password,String orgId) {
+	public User2bkp(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.orgId = orgId;
 	}
-	
-	
 
 	public Long getId() {
 		return id;
@@ -90,11 +82,4 @@ public class User {
 		this.roles = roles;
 	}
 
-	public String getOrgId() {
-		return orgId;
-	}
-
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
-	}
 }

@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,6 +49,8 @@ import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
 @RequestMapping("/api/auth")
 public class AuthController {
 	
+	private static final Logger logger= LoggerFactory.getLogger(AuthController.class);
+	
 	@Value("${asiczen.from.email}")
 	private String mailFrom;
 	
@@ -85,13 +89,18 @@ public class AuthController {
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		
+		logger.debug("Ching for Orgnization id : "+userDetails.toString());
+		System.out.println("Printing value");
+		logger.info("Ching for Orgnization id : "+userDetails.toString());
+		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		 "User validate Successfully",
 																		 new JwtResponse(jwt, 
 																				 userDetails.getId(), 
 																				 userDetails.getUsername(), 
 																				 userDetails.getEmail(), 
-																				 roles)));	
+																				 roles,
+																				 userDetails.getOrgId())));	
 	}
 
 	@PostMapping("/signup")
@@ -108,7 +117,8 @@ public class AuthController {
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()));
+							 encoder.encode(signUpRequest.getPassword()),
+							 signUpRequest.getOrgId());
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();

@@ -124,6 +124,19 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 
-    }   
+    }
+    
+    @ExceptionHandler(SomeInternalException.class)
+    public ResponseEntity<CustomErrorResponse> fileUploadException(Exception ex, WebRequest request){
+    	
+    	  CustomErrorResponse errors = new CustomErrorResponse();
+          errors.setTimestamp(LocalDateTime.now());
+          errors.setError(ex.getMessage());
+          errors.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+          errors.setMessage(ex.getMessage());
+
+          return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 }
 

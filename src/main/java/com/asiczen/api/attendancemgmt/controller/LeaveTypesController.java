@@ -16,10 +16,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
+import com.asiczen.api.attendancemgmt.payload.response.UploadFileResponse;
+import com.asiczen.api.attendancemgmt.services.FileStorageService;
 import com.asiczen.api.attendancemgmt.services.LeaveTypesServiceImple;
+import com.asiczen.api.attendancemgmt.utils.ReadExcelFile;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -29,7 +34,13 @@ public class LeaveTypesController {
 	private static final Logger logger = LoggerFactory.getLogger(LeaveTypesController.class);
 	
 	@Autowired
+	private FileStorageService fileStorageService;
+	
+	@Autowired
 	LeaveTypesServiceImple leaveTypeService;
+	
+	@Autowired
+	ReadExcelFile readUpload;
 	
 	@PostMapping("/leavetype")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
@@ -53,6 +64,23 @@ public class LeaveTypesController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				 														"LeaveTypes Extracted Successfully",
 				 														leaveTypeService.getLeaveTypesByOrganization(orgid)));
+	}
+	
+	
+	@PostMapping("/leavetype/upload")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public UploadFileResponse uploadLeaveFile(@RequestParam("file") MultipartFile file) {
+		
+		String fileName = fileStorageService.storeFile(file);
+		
+		logger.debug("File with file name "+ fileName+ " uploaded successflly");
+		
+		readUpload.readLeaveTypeExcel(fileName, "testing143");
+		
+		
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(fileName).toUriString();
+		
+		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 	
 }

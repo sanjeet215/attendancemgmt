@@ -13,7 +13,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "leavetypes", uniqueConstraints = @UniqueConstraint(columnNames = { "org_id", "leaveTypeName" }))
+//@Table(name = "leavetypes", uniqueConstraints = @UniqueConstraint(columnNames = { "org_id", "leaveTypeName" }))
+@Table(name = "leavetypes")
 public class LeaveTypes extends AuditModel {
 
 	private static final long serialVersionUID = -1040317321318112432L;
@@ -24,12 +25,12 @@ public class LeaveTypes extends AuditModel {
 
 	@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters")
 	@NotEmpty(message = "Organization Id is required/Can't be blank")
-	@Column(name = "org_id")
+	@Column(name = "orgid")
 	private String orgId;
 
 	@Size(min = 5, max = 100, message = "Leave Type should be between 5 to 100 characters")
 	@NotEmpty(message = "Leave Type is required/Can't be blank")
-	@Column(unique = true)
+	@Column(unique = false)
 	private String leaveTypeName;
 
 	@Min(value = 0, message = "The value must be positive")

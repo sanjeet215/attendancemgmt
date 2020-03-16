@@ -20,8 +20,21 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 6, max = 40 , message = "password can't be blank, must be between 6 to 40 chars")
     private String password;
+    
+    
+    @NotEmpty(message = "Organization Id is required/Can't be blank")
+	@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters")
+	private String orgId;
   
-    public String getUsername() {
+    public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getUsername() {
         return username;
     }
  
@@ -52,4 +65,6 @@ public class SignupRequest {
     public void setRole(Set<String> role) {
       this.role = role;
     }
+    
+    
 }

@@ -21,25 +21,28 @@ public class UserDetailsImpl implements UserDetails {
 
 	private String email;
 
+	private String orgId;
+	
 	@JsonIgnore
 	private String password;
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserDetailsImpl(Long id, String username, String email, String password,
+	public UserDetailsImpl(Long id, String username, String email, String orgId,String password,
 			Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.authorities = authorities;
+		this.orgId = orgId;
 	}
 
 	public static UserDetailsImpl build(User user) {
 		List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
 
-		return new UserDetailsImpl(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), authorities);
+		return new UserDetailsImpl(user.getId(), user.getUsername(), user.getEmail(),user.getOrgId(), user.getPassword(), authorities);
 	}
 
 	@Override
@@ -84,6 +87,14 @@ public class UserDetailsImpl implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+	
+	public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -94,4 +105,12 @@ public class UserDetailsImpl implements UserDetails {
 		UserDetailsImpl user = (UserDetailsImpl) o;
 		return Objects.equals(id, user.id);
 	}
+
+	@Override
+	public String toString() {
+		return "UserDetailsImpl [id=" + id + ", username=" + username + ", email=" + email + ", orgId=" + orgId
+				+ ", password=" + password + ", authorities=" + authorities + "]";
+	}
+	
+	
 }

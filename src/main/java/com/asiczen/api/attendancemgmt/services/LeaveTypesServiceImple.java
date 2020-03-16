@@ -29,7 +29,6 @@ public class LeaveTypesServiceImple {
 		if(leaveTypeNames.isPresent())
 		    throw new ResourceAlreadyExistException("Leave type already exists."+leavetype.getOrgId()+"_"+leavetype.getLeaveTypeName());
 		
-		
 		return leaveTypeRepo.save(leavetype);
 	}
 	
@@ -49,6 +48,10 @@ public class LeaveTypesServiceImple {
 		return leavetypes.get();
 	}
 
+	
+	public void deleteByOrganization(String orgId) {
+		leaveTypeRepo.deleteByOrgId(orgId);
+	}
 	
 	/*Get All leaves present in database by organization and status */
 	
