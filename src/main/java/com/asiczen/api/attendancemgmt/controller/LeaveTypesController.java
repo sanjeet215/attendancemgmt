@@ -70,13 +70,13 @@ public class LeaveTypesController {
 	@PostMapping("/leavetype/upload")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public UploadFileResponse uploadLeaveFile(@RequestParam("file") MultipartFile file,
-											  @RequestParam String orgid) {
+											  @RequestParam String orgId) {
 		
 		String fileName = fileStorageService.storeFile(file);
 		
 		logger.debug("File with file name "+ fileName+ " uploaded successflly");
 		
-		readUpload.readLeaveTypeExcel(fileName, orgid);
+		readUpload.readLeaveTypeExcel(fileName, orgId);
 		
 		
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(fileName).toUriString();
