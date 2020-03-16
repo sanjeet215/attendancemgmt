@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 @Service
 public class EmpServiceImpl {
 
+	private static final Logger logger = LoggerFactory.getLogger(EmpServiceImpl.class);
+	
 	@Autowired
 	EmployeeRepository empRepo;
 
@@ -31,6 +35,8 @@ public class EmpServiceImpl {
 	/* Add new Employee */
 
 	public Employee addNewEmployee(Employee emp) {
+		logger.info("TestLine Testline" + emp.getOrgId());
+		
 		return empRepo.save(emp);
 	}
 

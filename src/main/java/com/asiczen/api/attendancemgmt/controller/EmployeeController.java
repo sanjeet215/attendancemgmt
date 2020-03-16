@@ -47,6 +47,8 @@ public class EmployeeController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody Employee emp){
 		
+		logger.info("Test COntroller"+ emp.getOrgId());
+		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 																					   "Employee Created Successfully",
 																					   empService.addNewEmployee(emp)));
@@ -85,7 +87,7 @@ public class EmployeeController {
 	
 	@GetMapping("/emp/profile")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
-	public ResponseEntity<ApiResponse> retrieveEmpbyEmail(@Valid @PathVariable String emailid){
+	public ResponseEntity<ApiResponse> retrieveEmpbyEmail(@Valid @RequestParam String emailid){
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		 "Employee with id: "+emailid+" retrieved successfully",
 																		  empService.findByEmailid(emailid)));
@@ -131,7 +133,7 @@ public class EmployeeController {
 		
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-														   				 "Employee Count extracted",
+														   				 "Emp/Dept Count extracted",
 														   				 count));
 	}
 	
