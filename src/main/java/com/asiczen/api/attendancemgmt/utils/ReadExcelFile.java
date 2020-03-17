@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.SomeInternalException;
@@ -32,13 +33,22 @@ public class ReadExcelFile {
 	@Autowired
 	LeaveTypesServiceImple leaveService;
 	
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+	
+	
 	public void readLeaveTypeExcel(String filePath,String orgId) {
 
+		
+		logger.debug("File path :"+ filePath);
+		System.out.println("File path :"+ filePath);
+		
 		List<String> fileData = new ArrayList<String>();
 		String readRow = null;
+		
 
 		try {
-			File excel = new File("D://EMP-mgt-Sridhar//files//Leave_System.xlsx");
+			File excel = new File(uploadDir+"/"+filePath);
 			FileInputStream fis = new FileInputStream(excel);
 			XSSFWorkbook book = new XSSFWorkbook(fis);
 			XSSFSheet sheet = book.getSheetAt(0);
