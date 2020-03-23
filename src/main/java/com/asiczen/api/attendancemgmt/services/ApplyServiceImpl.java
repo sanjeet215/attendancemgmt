@@ -2,6 +2,7 @@ package com.asiczen.api.attendancemgmt.services;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
-import com.asiczen.api.attendancemgmt.exception.StatusAlreadyApproved;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
 import com.asiczen.api.attendancemgmt.repository.ApplyLeaveRepository;
 
@@ -62,10 +62,11 @@ public class ApplyServiceImpl {
 		
 		// 1. Find Request from database
 		
-		Optional<AppliedLeaves> leave = appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(appliedLeave.getOrgId(), appliedLeave.getEmpId(), appliedLeave.getStatus());
+		Optional<AppliedLeaves> leave = appliedLeavesRepo.findById(appliedLeave.getId());
+				//appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(appliedLeave.getOrgId(), appliedLeave.getEmpId(), appliedLeave.getStatus());
 		
 		if(!leave.isPresent()) {
-			throw new ResourceNotFoundException("Request not found to update."+ leave.get().getEmpId() + leave.get().getId());
+			throw new ResourceNotFoundException("Request not found to update. "+ leave.get().getEmpId() +"  "+ leave.get().getId());
 		}
 		
 		if(appliedLeave.getStatus().equalsIgnoreCase("APPROVED")) {
@@ -83,6 +84,21 @@ public class ApplyServiceImpl {
 //		} else if(leave.get().getStatus().equalsIgnoreCase("CANCELED")) {
 //			
 //		}
+		
+	}
+	
+	
+	public List<AppliedLeaves> getLeaveswithStatus(String orgId,String empId,String status){
+		
+		Optional<List<AppliedLeaves>> leaves = appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(orgId, empId, status);
+		
+		if(!leaves.isPresent()) {
+			throw new ResourceNotFoundException("Request Not Found with following criteria. orgId: "+orgId+ " empId: "+empId+ " status:"+ status);
+		}
+		
+		//appliedLeavesRepo.findLeaveHistory();
+		
+		return appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(orgId, empId, status).get();
 		
 	}
 

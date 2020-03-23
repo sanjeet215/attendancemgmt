@@ -39,13 +39,17 @@ public class ApplyLeaveController {
 				"Leaves posted Successfully", applyLeaveService.postLeaves(leaves)));
 	}
 
-	/* Get Employee specific Leave status */
+	/* Get Employee specific Leave with status */
 	@GetMapping("/applyleave")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
-	public ResponseEntity<ApiResponse> getLeaves(@Valid @RequestParam String orgid, @Valid @RequestParam String empId) {
-		
-		
-		return null;
+	public ResponseEntity<ApiResponse> getLeaves(@Valid @RequestParam String orgid, 
+												 @Valid @RequestParam String empId,
+												 @Valid @RequestParam String status) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Leaves data extracted successfully", applyLeaveService.getLeaveswithStatus(orgid, empId, status)));
 	}
+
+	
+	/* Get Leaves with count and status*/
 
 }

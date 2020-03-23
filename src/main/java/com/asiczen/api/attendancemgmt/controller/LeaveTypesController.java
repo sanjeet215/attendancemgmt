@@ -57,6 +57,7 @@ public class LeaveTypesController {
 //														 leaveTypeService.getAllLeavetypes()));
 //	}
 	
+	//Leave Types based on orgID. This is for drop down.
 	
 	@GetMapping("/leavetype")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
@@ -66,6 +67,7 @@ public class LeaveTypesController {
 				 														leaveTypeService.getLeaveTypesByOrganization(orgid)));
 	}
 	
+	//Upload Leavetype ExcelSheet
 	
 	@PostMapping("/leavetype/upload")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
