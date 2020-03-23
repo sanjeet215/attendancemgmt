@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,47 +38,45 @@ import com.asiczen.api.attendancemgmt.services.FileStorageService;
 @RestController
 @RequestMapping("/api/file")
 public class FileMobileAppController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FileMobileAppController.class);
-	
+
 	@Autowired
 	private FileServiceMobile fileStorageService;
-	
-	
-	
-	
+
 	@PostMapping("/upload")
 	public ResponseEntity<ApiResponse> uploadToLocalFileSystem(@Valid @RequestParam("file") MultipartFile file,
-												  @Valid @RequestParam("orgId") String orgId) 
-	{
-		String fileName = fileStorageService.storeFile(file,orgId);
-		
+			@Valid @RequestParam("orgId") String orgId) {
+		String fileName = fileStorageService.storeFile(file, orgId);
+
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
-		
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-																		 "File uploaded successfully.",
-																		 fileDownloadUri));
-		
-//		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-//		Path path = Paths.get(fileBasePath + fileName);
-//		try {
-//			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-//				.path("/files/download/")
-//				.path(fileName)
-//				.toUriString();
-//		return ResponseEntity.ok(fileDownloadUri);
-		
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ApiResponse(HttpStatus.OK.value(), "File uploaded successfully.", fileDownloadUri));
 	}
-	
-//	@GetMapping("/downloadFile/{orgId:.+}")
-//	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-//		
-//	}
+
+	@GetMapping("/download")
+	public ResponseEntity<Resource> downloadFile(@RequestParam String orgId, HttpServletRequest request) {
+
+		Resource resource = fileStorageService.loadFileAsResource(orgId);
+		
+		String contentType = null;
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+		} catch (IOException ex) {
+			logger.error("Could not determine file type.");
+		}
+
+		// Fallback to the default content type if type could not be determined
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
 
 }
