@@ -116,4 +116,18 @@ public class EmpServiceImpl {
 	}
 	
 	
+	/* Validate Employee , Mobile end point*/
+	
+	public boolean validateEmployee(String empId,String orgId) {
+		
+		Optional<Employee> emp = empRepo.findByEmpIdAndEmpStatusAndOrgId(empId, true,orgId);
+		
+		if(!emp.isPresent()) {
+			throw new ResourceNotFoundException("Employee with empId: "+empId+" and OrgId: "+orgId+" not found in database");
+		} else {
+			return true;
+		}
+		
+	}
+	
 }

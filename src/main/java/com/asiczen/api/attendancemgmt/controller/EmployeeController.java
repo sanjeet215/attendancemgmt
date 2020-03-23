@@ -137,4 +137,14 @@ public class EmployeeController {
 														   				 count));
 	}
 	
+	
+	@GetMapping("/emp/validate")
+	public ResponseEntity<ApiResponse> validateEmployee(@Valid @RequestParam String empId,@Valid @RequestParam String orgId){
+		logger.debug("Query parameter empId--> "+ empId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Emp with empId: "+empId+"found",
+																		 empService.validateEmployee(empId.trim(),orgId.trim())));
+																		 
+	}
 }

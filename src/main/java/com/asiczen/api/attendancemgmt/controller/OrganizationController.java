@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.model.Organization;
@@ -61,4 +62,16 @@ public class OrganizationController {
 		
 	}
 	
+	
+	/* Mobile EndPoint */
+	/* Check If Organiation Id is valid*/
+	
+	@GetMapping("/org/validate")
+	public ResponseEntity<ApiResponse> validateOrganization(@Valid @RequestParam String orgId) {
+		
+		logger.debug("Query parameter orgId--> "+ orgId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Organization " + orgId + " valiated", orgService.validateOrganization(orgId.trim())));
+	}
 }

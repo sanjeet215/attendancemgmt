@@ -82,5 +82,16 @@ public class OrganizationServiceImpl {
 		}).orElseThrow(() -> new ResourceNotFoundException("Orgnization Id : "+ newCompany.getId() + "not found"));
 
 	}
+	
+	public boolean validateOrganization(String orgId) {
+
+		Optional<Organization> org = orgRepo.findByorganizationDisplayNameAndStatus(orgId, "true");
+
+		if (!org.isPresent()) {
+			throw new ResourceNotFoundException("Organization with OrgId: "+orgId+" not registered yet");
+		} else {
+			return true;
+		}
+	}
 
 }
