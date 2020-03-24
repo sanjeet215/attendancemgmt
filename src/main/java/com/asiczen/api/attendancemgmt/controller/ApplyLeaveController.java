@@ -51,5 +51,29 @@ public class ApplyLeaveController {
 
 	
 	/* Get Leaves with count and status*/
+	
+	
+	
+	/*Get Leaves by OrgId. This is for my approval page. It should show all pending Leaves for all employees*/
 
+	@GetMapping("/leave/myapprovals")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getMyApprovals(@Valid @RequestParam String orgid,
+													  @Valid @RequestParam String status){
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Leaves data extracted successfully", 
+																		 applyLeaveService.getLeaveswithOrgandStatus(orgid,status)));
+	}
+	
+	
+	@GetMapping("/leave/mystatus")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
+	public ResponseEntity<ApiResponse> getEmpLevelLeaves(@Valid @RequestParam String orgid, 
+												 @Valid @RequestParam String empid) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Leaves data extracted successfully", 
+																		 applyLeaveService.getLeaveswithOrgandEmpId(orgid, empid)));
+	}
+	
 }

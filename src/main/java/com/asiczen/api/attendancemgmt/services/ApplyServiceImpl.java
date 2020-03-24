@@ -98,8 +98,30 @@ public class ApplyServiceImpl {
 		
 		//appliedLeavesRepo.findLeaveHistory();
 		
-		return appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(orgId, empId, status).get();
+		return leaves.get();
 		
 	}
+	
+	/* My Pending approvals screen. This is to show leaves which are pending to be approved */
 
+	public List<AppliedLeaves> getLeaveswithOrgandStatus(String orgId,String status){
+		
+		Optional<List<AppliedLeaves>> leaves = appliedLeavesRepo.findByOrgIdAndStatus(orgId, status);
+		
+		if(!leaves.isPresent()) {
+			throw new ResourceNotFoundException("Request Not Found with following criteria. orgId: "+orgId+ " status:"+ status);
+		}
+		return leaves.get();
+	}
+	
+
+	public List<AppliedLeaves> getLeaveswithOrgandEmpId(String orgId,String empId){
+		
+		Optional<List<AppliedLeaves>> leaves = appliedLeavesRepo.findByOrgIdAndEmpId(orgId, empId);
+		
+		if(!leaves.isPresent()) {
+			throw new ResourceNotFoundException("Request Not Found with following criteria. orgId: "+orgId+ " empId:"+ empId);
+		}
+		return leaves.get();
+	}
 }
