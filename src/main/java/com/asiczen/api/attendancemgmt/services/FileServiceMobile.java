@@ -58,7 +58,7 @@ public class FileServiceMobile {
 		try {
 			if (orgDir.exists() && orgDir.isDirectory()) {
 				logger.debug("Directory already exists, so file should be placed under it..");
-				System.out.println("For Testing only, Please delete after");
+				//System.out.println("For Testing only, Please delete after");
 			} else {
 				Files.createDirectories(orgDir.toPath());
 			}
@@ -83,41 +83,48 @@ public class FileServiceMobile {
 	}
 
 	public Resource loadFileAsResource(String orgId) {
+
 		try {
-			File orgDir = new File(fileStorageLocation.toString() + "/" + orgId);
+
+			File orgfolderexists = new File(fileStorageLocation.toString() + "/" + orgId);
+
+			File orgZipFile = new File(fileStorageLocation.toString() + "/" + orgId + ".zip");
 			String outPutZipFileName = fileStorageLocation.toString() + "/" + orgId + ".zip";
-			zipService.zip(orgDir.toString(), outPutZipFileName);
+
+			//System.out.println("File to delete :" + orgZipFile.toString());
+			
+			if (orgZipFile.exists()) {
+				logger.debug("Old File is already present. So deleting " + orgZipFile.toString());
+				orgZipFile.delete();
+			} else {
+				logger.info("There are no old files to delete.");
+			}
+			
+			
+
+			if (orgfolderexists.exists() && orgfolderexists.isDirectory()) {
+
+				zipService.zip(orgfolderexists.toString(), outPutZipFileName);
+
+			} else {
+				throw new ResourceNotFoundException("Orgnization with orgId: " + orgId + " doesn't exist");
+			}
 
 			Path filePath = fileStorageLocation.resolve(orgId + ".zip").normalize();
-			
-			System.out.println("Delete Me"+ filePath.toString());
-			
 			Resource resource = new UrlResource(filePath.toUri());
 
 			if (resource.exists()) {
 				return resource;
 			} else {
-				throw new MyFileNotFoundException("File not found " + orgDir);
+				throw new MyFileNotFoundException("File not found " + orgfolderexists);
 			}
 
 		} catch (MalformedURLException io) {
 			logger.error("Error while loading the file" + io.getMessage());
 			throw new ResourceNotFoundException("Zip FIle missing" + io.getMessage());
 		} catch (IOException ex) {
-			throw new MyFileNotFoundException("File not found ", ex);
+			throw new MyFileNotFoundException("File not found for Organization id: " + orgId, ex);
 		}
-
-		// try {
-		// Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-		// Resource resource = new UrlResource(filePath.toUri());
-		// if (resource.exists()) {
-		// return resource;
-		// } else {
-		// throw new MyFileNotFoundException("File not found " + fileName);
-		// }
-		// } catch (MalformedURLException ex) {
-		// throw new MyFileNotFoundException("File not found " + fileName, ex);
-		// }
 	}
 
 }

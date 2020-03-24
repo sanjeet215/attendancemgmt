@@ -62,6 +62,19 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     }
     
+    
+    @ExceptionHandler(MyFileNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> FileNotFoundException(Exception ex, WebRequest request){
+    	
+    	CustomErrorResponse errors = new CustomErrorResponse();
+        errors.setTimestamp(LocalDateTime.now());
+        errors.setError(ex.getMessage());
+        errors.setStatus(HttpStatus.NOT_FOUND.value());
+        errors.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+    
     @ExceptionHandler(ResourceAlreadyExistException.class)
     public ResponseEntity<CustomErrorResponse> resourceAlreadyExistException(Exception ex, WebRequest request) {
 
