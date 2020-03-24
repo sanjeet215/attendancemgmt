@@ -50,7 +50,19 @@ public class ApplyLeaveController {
 	}
 
 	
-	/* Get Leaves with count and status*/
+	/* Employee Specific Leaves and Balances*/
+	
+	@GetMapping("/leave/balance")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
+	public ResponseEntity<ApiResponse> getEmpLeaveBalance(@Valid @RequestParam String orgid,
+														  @Valid @RequestParam String empid){
+		
+		//applyLeaveService.getEmpLeaveBalance(orgid, empid);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				 														 "Employee leave data extracted successfully", 
+				 														 applyLeaveService.getEmpLeaveBalance(orgid, empid)));
+	}
 	
 	
 	

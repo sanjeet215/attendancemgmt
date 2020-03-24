@@ -2,6 +2,7 @@ package com.asiczen.api.attendancemgmt.services;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
+import com.asiczen.api.attendancemgmt.model.LeaveTypes;
+import com.asiczen.api.attendancemgmt.payload.response.LeaveBalance;
 import com.asiczen.api.attendancemgmt.repository.ApplyLeaveRepository;
+import com.asiczen.api.attendancemgmt.repository.LeaveTypesReposiory;
 
 @Service
 public class ApplyServiceImpl {
@@ -21,6 +25,9 @@ public class ApplyServiceImpl {
 
 	@Autowired
 	ApplyLeaveRepository appliedLeavesRepo;
+	
+	@Autowired
+	LeaveTypesReposiory leaveRepository;
 
 	public AppliedLeaves postLeaves(AppliedLeaves appliedLeave) {
 
@@ -114,6 +121,7 @@ public class ApplyServiceImpl {
 		return leaves.get();
 	}
 	
+	//Get All leave types based on orgId and empId
 
 	public List<AppliedLeaves> getLeaveswithOrgandEmpId(String orgId,String empId){
 		
@@ -124,4 +132,48 @@ public class ApplyServiceImpl {
 		}
 		return leaves.get();
 	}
+	
+	//Get Employee specific leave balances
+	public LeaveBalance getEmpLeaveBalance(String orgId,String empId) {
+		
+		HashMap<String, Double> mapOrg = new HashMap<>();
+		//HashMap<String, Integer> mapEmp = new HashMap<>();
+		
+		Optional<List<LeaveTypes>> orgLeaves = leaveRepository.findByOrgIdAndStatus(orgId, true);
+		
+		if(!orgLeaves.isPresent()) {
+			throw new ResourceNotFoundException("Organization with orgid: "+orgId+" is not registered yet.");
+		}else {
+			orgLeaves.get().forEach(item -> mapOrg.put(item.getLeaveTypeName(),(double)item.getQuantity()));
+		}
+		
+		
+		Optional<List<AppliedLeaves>> empLeaves = appliedLeavesRepo.findByOrgIdAndEmpId(orgId, empId);
+		
+		if(!empLeaves.isPresent()) {
+			throw new ResourceNotFoundException("Employee with orgid: "+orgId+ " and empId:"+empId+" is not registered yet.");
+		} else {
+			
+			empLeaves.get().forEach(item->{
+				if(item.getStatus().equalsIgnoreCase("pending")||item.getStatus().equalsIgnoreCase("approved")) {
+					logger.info("I am in for Loop");
+					System.out.println(item.getQuantity());
+					if(mapOrg.containsKey(item.getLeaveTypeName())) {
+						double quantity = mapOrg.get(item.getLeaveTypeName());
+						quantity = quantity-item.getQuantity();
+						mapOrg.remove(item.getLeaveTypeName());
+						mapOrg.put(item.getLeaveTypeName(), quantity);
+					}
+				}
+			});
+		}
+		
+		logger.debug(mapOrg.toString());
+//		System.out.println(mapOrg.toString());
+		
+		return new LeaveBalance(orgId,empId,mapOrg);
+	}
+	
+	
+	
 }

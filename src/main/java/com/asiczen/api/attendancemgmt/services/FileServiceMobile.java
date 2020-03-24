@@ -32,23 +32,26 @@ public class FileServiceMobile {
 	ZipFolderServiceImpl zipService;
 
 	// @Value("${android.app-dir}")
-	private String fileBasePath = "D:/projectwork/FingerPrints";
+	//private String fileBasePath = "D:/projectwork/FingerPrints";
+	
+//	@Value("${android.app-dir}")
+//	private String fileBasePath;
+//
+//	private final Path fileStorageLocation = Paths.get(fileBasePath);
 
-	private final Path fileStorageLocation;
+//	@Autowired
+//	public FileServiceMobile() {
+//		this.fileStorageLocation = Paths.get(fileBasePath).toAbsolutePath().normalize();
+//
+//		try {
+//			Files.createDirectories(this.fileStorageLocation);
+//		} catch (Exception ex) {
+//			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
+//					ex);
+//		}
+//	}
 
-	@Autowired
-	public FileServiceMobile() {
-		this.fileStorageLocation = Paths.get(fileBasePath).toAbsolutePath().normalize();
-
-		try {
-			Files.createDirectories(this.fileStorageLocation);
-		} catch (Exception ex) {
-			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
-					ex);
-		}
-	}
-
-	public String storeFile(MultipartFile file, String orgId) {
+	public String storeFile(MultipartFile file, String orgId,Path fileStorageLocation) {
 		// Normalize file name
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -82,7 +85,7 @@ public class FileServiceMobile {
 		}
 	}
 
-	public Resource loadFileAsResource(String orgId) {
+	public Resource loadFileAsResource(String orgId,Path fileStorageLocation) {
 
 		try {
 

@@ -43,11 +43,17 @@ public class FileMobileAppController {
 
 	@Autowired
 	private FileServiceMobile fileStorageService;
+	
+	@Value("${android.app-dir}")
+	private String fileBasePath;
 
 	@PostMapping("/upload")
 	public ResponseEntity<ApiResponse> uploadToLocalFileSystem(@Valid @RequestParam("file") MultipartFile file,
 			@Valid @RequestParam("orgId") String orgId) {
-		String fileName = fileStorageService.storeFile(file, orgId);
+		
+		Path fileStorageLocation = Paths.get(fileBasePath);
+		
+		String fileName = fileStorageService.storeFile(file, orgId,fileStorageLocation);
 
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
@@ -59,7 +65,9 @@ public class FileMobileAppController {
 	@GetMapping("/download")
 	public ResponseEntity<Resource> downloadFile(@RequestParam String orgId, HttpServletRequest request) {
 
-		Resource resource = fileStorageService.loadFileAsResource(orgId);
+		Path fileStorageLocation = Paths.get(fileBasePath);
+		
+		Resource resource = fileStorageService.loadFileAsResource(orgId,fileStorageLocation);
 		
 		String contentType = null;
 		try {
