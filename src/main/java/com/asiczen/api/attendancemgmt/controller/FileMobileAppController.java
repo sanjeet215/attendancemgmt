@@ -74,11 +74,9 @@ public class FileMobileAppController {
 		}
 
 
-//		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
-//				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//				.body(resource);
-		
-		return null;
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
 	}
 
 }
