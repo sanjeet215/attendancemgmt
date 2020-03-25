@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +49,19 @@ public class ApplyLeaveController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Leaves data extracted successfully", applyLeaveService.getLeaveswithStatus(orgid, empId, status)));
 	}
+	
+	
+	/* Approve/Reject/cancel from (pending) , Update leave*/
+	
+	@PutMapping("/applyleave")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
+	public ResponseEntity<ApiResponse> updateLeaves(@Valid @RequestParam String orgid,
+													@Valid @RequestParam long id,
+													@Valid @RequestParam String status) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Leaves data extracted successfully", applyLeaveService.updatestatus(orgid,id,status)));
+	}
+	
 
 	
 	/* Employee Specific Leaves and Balances*/

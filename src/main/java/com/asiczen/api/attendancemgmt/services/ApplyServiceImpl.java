@@ -12,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
+import com.asiczen.api.attendancemgmt.exception.StatusAlreadyApproved;
+import com.asiczen.api.attendancemgmt.exception.UnauthorizedAccess;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
 import com.asiczen.api.attendancemgmt.model.User;
@@ -90,33 +93,35 @@ public class ApplyServiceImpl {
 	
 	
 	/* Approval from Admin or User can cancel it's own request*/
-	public AppliedLeaves updatestatus(AppliedLeaves appliedLeave) {
+	public AppliedLeaves updatestatus(String orgid,long id,String status) {
 		
-		// 1. Find Request from database
-		
-		Optional<AppliedLeaves> leave = appliedLeavesRepo.findById(appliedLeave.getId());
+		Optional<AppliedLeaves> leave = appliedLeavesRepo.findById(id);
 				//appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(appliedLeave.getOrgId(), appliedLeave.getEmpId(), appliedLeave.getStatus());
 		
 		if(!leave.isPresent()) {
 			throw new ResourceNotFoundException("Request not found to update. "+ leave.get().getEmpId() +"  "+ leave.get().getId());
 		}
 		
-		if(appliedLeave.getStatus().equalsIgnoreCase("APPROVED")) {
-			//Post an Enter to HistoryTable
+		if(!leave.get().getOrgId().equalsIgnoreCase(orgid)) {
+			throw new UnauthorizedAccess("Unauthorized Access.Refrain from it");
 		}
 		
-		leave.get().setStatus(appliedLeave.getStatus());
+		if (leave.get().getStatus().equalsIgnoreCase("APPROVED")) {
+			throw new StatusAlreadyApproved("Leave Request is already in approved status");
+		} else if (leave.get().getStatus().equalsIgnoreCase("REJECTED")) {
+			throw new StatusAlreadyApproved("Leave Request is already in rejected status");
+		} else if (leave.get().getStatus().equalsIgnoreCase("CANCELED")) {
+			throw new StatusAlreadyApproved("Leave Request is already in canceled status");
+		} else if(leave.get().getStatus().equalsIgnoreCase("PENDING")) {
+			leave.get().setStatus(status);
+		} else {
+			throw new StatusAlreadyApproved("Incorrect status requested.");
+		}		
 		
-		return appliedLeavesRepo.save(leave.get());
+		// Check to be added, if moderator can approve is own leaves.
+		// Check access level based on orgid
 		
-//		if(leave.get().getStatus().equalsIgnoreCase("APPROVED")) {
-//			throw new StatusAlreadyApproved("Leave Request is already in approved status");
-//		} else if(leave.get().getStatus().equalsIgnoreCase("PENDING")) {
-//			
-//		} else if(leave.get().getStatus().equalsIgnoreCase("CANCELED")) {
-//			
-//		}
-		
+		return appliedLeavesRepo.save(leave.get());		
 	}
 	
 	
@@ -127,8 +132,6 @@ public class ApplyServiceImpl {
 		if(!leaves.isPresent()) {
 			throw new ResourceNotFoundException("Request Not Found with following criteria. orgId: "+orgId+ " empId: "+empId+ " status:"+ status);
 		}
-		
-		//appliedLeavesRepo.findLeaveHistory();
 		
 		return leaves.get();
 		
