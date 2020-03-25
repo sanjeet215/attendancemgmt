@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.exception.StatusAlreadyApproved;
 import com.asiczen.api.attendancemgmt.exception.UnauthorizedAccess;
@@ -93,16 +92,16 @@ public class ApplyServiceImpl {
 	
 	
 	/* Approval from Admin or User can cancel it's own request*/
-	public AppliedLeaves updatestatus(String orgid,long id,String status) {
+	public AppliedLeaves updatestatus(AppliedLeaves appliedLeave) {
 		
-		Optional<AppliedLeaves> leave = appliedLeavesRepo.findById(id);
+		Optional<AppliedLeaves> leave = appliedLeavesRepo.findById(appliedLeave.getId());
 				//appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(appliedLeave.getOrgId(), appliedLeave.getEmpId(), appliedLeave.getStatus());
 		
 		if(!leave.isPresent()) {
 			throw new ResourceNotFoundException("Request not found to update. "+ leave.get().getEmpId() +"  "+ leave.get().getId());
 		}
 		
-		if(!leave.get().getOrgId().equalsIgnoreCase(orgid)) {
+		if(!leave.get().getOrgId().equalsIgnoreCase(appliedLeave.getOrgId())) {
 			throw new UnauthorizedAccess("Unauthorized Access.Refrain from it");
 		}
 		
@@ -113,7 +112,8 @@ public class ApplyServiceImpl {
 		} else if (leave.get().getStatus().equalsIgnoreCase("CANCELED")) {
 			throw new StatusAlreadyApproved("Leave Request is already in canceled status");
 		} else if(leave.get().getStatus().equalsIgnoreCase("PENDING")) {
-			leave.get().setStatus(status);
+			leave.get().setStatus(appliedLeave.getStatus());
+			leave.get().setComments(appliedLeave.getComments());
 		} else {
 			throw new StatusAlreadyApproved("Incorrect status requested.");
 		}		

@@ -29,14 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.model.ERole;
-import com.asiczen.api.attendancemgmt.model.Moderator;
 import com.asiczen.api.attendancemgmt.model.Role;
 import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.request.LoginRequest;
 import com.asiczen.api.attendancemgmt.payload.request.SignupRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.JwtResponse;
-import com.asiczen.api.attendancemgmt.repository.ModeratorRepository;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;

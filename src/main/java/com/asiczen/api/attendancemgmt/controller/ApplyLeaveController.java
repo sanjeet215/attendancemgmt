@@ -55,11 +55,9 @@ public class ApplyLeaveController {
 	
 	@PutMapping("/applyleave")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
-	public ResponseEntity<ApiResponse> updateLeaves(@Valid @RequestParam String orgid,
-													@Valid @RequestParam long id,
-													@Valid @RequestParam String status) {
+	public ResponseEntity<ApiResponse> updateLeaves(@Valid @RequestBody AppliedLeaves leaves) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Leaves data extracted successfully", applyLeaveService.updatestatus(orgid,id,status)));
+				"Leaves data extracted successfully", applyLeaveService.updatestatus(leaves)));
 	}
 	
 
