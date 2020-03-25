@@ -1,15 +1,15 @@
 package com.asiczen.api.attendancemgmt.payload.response;
 
-public class LeaveBalance {
+public class LeaveBalance2 {
 
 	private String leaveName;
 	private double balance;
 
-	public LeaveBalance() {
+	public LeaveBalance2() {
 		super();
 	}
 
-	public LeaveBalance(String leaveName, double balance) {
+	public LeaveBalance2(String leaveName, double balance) {
 		super();
 		this.leaveName = leaveName;
 		this.balance = balance;

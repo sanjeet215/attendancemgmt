@@ -2,6 +2,7 @@ package com.asiczen.api.attendancemgmt.services;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
 import com.asiczen.api.attendancemgmt.payload.response.LeaveBalance;
+import com.asiczen.api.attendancemgmt.payload.response.LeaveBalanceResponse;
 import com.asiczen.api.attendancemgmt.repository.ApplyLeaveRepository;
 import com.asiczen.api.attendancemgmt.repository.LeaveTypesReposiory;
 
@@ -134,7 +136,7 @@ public class ApplyServiceImpl {
 	}
 	
 	//Get Employee specific leave balances
-	public LeaveBalance getEmpLeaveBalance(String orgId,String empId) {
+	public LeaveBalanceResponse getEmpLeaveBalance(String orgId,String empId) {
 		
 		HashMap<String, Double> mapOrg = new HashMap<>();
 		//HashMap<String, Integer> mapEmp = new HashMap<>();
@@ -156,8 +158,6 @@ public class ApplyServiceImpl {
 			
 			empLeaves.get().forEach(item->{
 				if(item.getStatus().equalsIgnoreCase("pending")||item.getStatus().equalsIgnoreCase("approved")) {
-					logger.info("I am in for Loop");
-					System.out.println(item.getQuantity());
 					if(mapOrg.containsKey(item.getLeaveTypeName())) {
 						double quantity = mapOrg.get(item.getLeaveTypeName());
 						quantity = quantity-item.getQuantity();
@@ -171,7 +171,14 @@ public class ApplyServiceImpl {
 		logger.debug(mapOrg.toString());
 //		System.out.println(mapOrg.toString());
 		
-		return new LeaveBalance(orgId,empId,mapOrg);
+		List<LeaveBalance> leaves = new ArrayList<>();
+		
+		mapOrg.forEach((k,v)->{
+			leaves.add(new LeaveBalance(k,v));
+		});
+		
+		
+		return new LeaveBalanceResponse(orgId,empId,leaves);
 	}
 	
 	
