@@ -121,6 +121,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>attendance</finalName>
 	</build>
 
 </project>
