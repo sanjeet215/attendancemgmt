@@ -70,6 +70,11 @@ public class ApplyServiceImpl {
 		} else {
 			quantity = quantity + 1;
 		}
+		
+		
+		if(appliedLeave.getFromDate().isEqual(appliedLeave.getToDate())) {
+			quantity = 1;
+		}
 
 		appliedLeave.setQuantity(quantity);
 		

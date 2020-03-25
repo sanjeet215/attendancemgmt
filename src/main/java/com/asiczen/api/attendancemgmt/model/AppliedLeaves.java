@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "appliedleaves")
+@Table(name = "leavemanagement")
 public class AppliedLeaves extends AuditModel {
 
 	private static final long serialVersionUID = -9184422320286031347L;
@@ -31,7 +31,7 @@ public class AppliedLeaves extends AuditModel {
 
 	@NotEmpty(message = "empId is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "empId should be between 5 to 10 characters")
-	@Column(name = "empid", unique = true, nullable = false)
+	@Column(name = "empid", nullable = false)
 	private String empId;
 
 	@Size(min = 5, max = 100, message = "Leave Type should be between 5 to 100 characters")
