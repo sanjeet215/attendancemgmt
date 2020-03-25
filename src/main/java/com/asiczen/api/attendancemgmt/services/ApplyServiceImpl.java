@@ -179,7 +179,8 @@ public class ApplyServiceImpl {
 		Optional<List<AppliedLeaves>> empLeaves = appliedLeavesRepo.findByOrgIdAndEmpId(orgId, empId);
 		
 		if(!empLeaves.isPresent()) {
-			throw new ResourceNotFoundException("Employee with orgid: "+orgId+ " and empId:"+empId+" is not registered yet.");
+//			throw new ResourceNotFoundException("Employee with orgid: "+orgId+ " and empId:"+empId+" is not registered yet.");
+			logger.info("Employee have not applied any leaves before.");
 		} else {
 			
 			empLeaves.get().forEach(item->{
@@ -204,7 +205,7 @@ public class ApplyServiceImpl {
 		});
 		
 		
-		return new LeaveBalanceResponse(orgId,empId,leaves);
+		return new LeaveBalanceResponse(empId,orgId,leaves);
 	}
 	
 	
