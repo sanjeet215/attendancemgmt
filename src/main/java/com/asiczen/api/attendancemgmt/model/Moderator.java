@@ -38,10 +38,19 @@ public class Moderator extends AuditModel {
 	@Size(max = 20)
 	String username;
 	
-	@NotBlank
 	boolean status;
 	
 	
+	public Moderator(
+			@Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters") @NotEmpty(message = "Organization Id is required/Can't be blank") String orgId,
+			@NotEmpty(message = "empEmailId is required/Can't be blank") @Size(min = 5, max = 50, message = "empEmailId should be between 5 to 50 characters") @Pattern(regexp = "^(.+)@(.+)$", message = "Email Id is invalid") @Email String emailId,
+			@NotBlank @Size(max = 20) String username, @NotBlank boolean status) {
+		super();
+		this.orgId = orgId;
+		this.emailId = emailId;
+		this.username = username;
+		this.status = status;
+	}
 
 	public long getId() {
 		return id;

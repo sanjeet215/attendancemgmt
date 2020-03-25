@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
+import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.response.LeaveBalance;
 import com.asiczen.api.attendancemgmt.payload.response.LeaveBalanceResponse;
 import com.asiczen.api.attendancemgmt.repository.ApplyLeaveRepository;
 import com.asiczen.api.attendancemgmt.repository.LeaveTypesReposiory;
+import com.asiczen.api.attendancemgmt.repository.UserRepository;
 
 @Service
 public class ApplyServiceImpl {
@@ -30,14 +32,22 @@ public class ApplyServiceImpl {
 	
 	@Autowired
 	LeaveTypesReposiory leaveRepository;
+	
+	@Autowired
+	UserRepository userRepo;
+	
+	@Autowired
+	EmailServiceImpl mailService;
 
 	public AppliedLeaves postLeaves(AppliedLeaves appliedLeave) {
 
 		int quantity = 0;
 
-		System.out.println("From Date -->" + appliedLeave.getFromDate());
-		System.out.println("To Date --> " + appliedLeave.getToDate());
+		logger.debug("From Date -->" + appliedLeave.getFromDate());
+		logger.debug("To Date --> " + appliedLeave.getToDate());
 
+		//Leave quantity calculation
+		
 		for (LocalDate date = appliedLeave.getFromDate(); date.isBefore(appliedLeave.getToDate()); date = date.plusDays(1)) {
 
 			System.out.println("Looping" + date.getDayOfWeek());
@@ -60,6 +70,19 @@ public class ApplyServiceImpl {
 		}
 
 		appliedLeave.setQuantity(quantity);
+		
+		List<String> emailList = new ArrayList<String>();
+		
+		Optional<List<User>> moderators = userRepo.findByorgId(appliedLeave.getOrgId());
+		if(moderators.isPresent()) {
+			moderators.get().forEach(item->{
+				emailList.add(item.getEmail());
+			});
+		}
+		
+		emailList.forEach(item->{
+			mailService.emailData("asizzent.com", item, "new leave is applied for your approval", "Leave Request");
+		});
 
 		return appliedLeavesRepo.save(appliedLeave);
 	}

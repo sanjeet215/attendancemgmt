@@ -33,7 +33,7 @@ public class EmailServiceImpl {
 		sendEmail(mail);
 	}
 
-	public void sendEmail(Mail mail) {
+	private void sendEmail(Mail mail) {
 
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 
