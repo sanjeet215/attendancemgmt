@@ -26,7 +26,7 @@ public class PayStructure extends AuditModel {
 
 	@NotEmpty(message = "componentName is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "componentName should be between 5 to 30 characters")
-	@Column(name = "empid", nullable = false)
+	@Column(name = "componentName", nullable = false)
 	private String componentName;
 
 	@NotEmpty(message = "sign is required/Can't be blank")
