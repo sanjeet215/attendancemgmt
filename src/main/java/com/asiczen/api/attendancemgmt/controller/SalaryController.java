@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.payload.request.SalaryComponent;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
+import com.asiczen.api.attendancemgmt.services.PaymentDetailServices;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -25,21 +28,29 @@ public class SalaryController {
 
 	private static final Logger logger = LoggerFactory.getLogger(SalaryController.class);
 	
-	//@Autowired
+	@Autowired
+	PaymentDetailServices service;
 	
 	@PostMapping("/paydetails")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> postEmpSalary(@Valid @RequestBody SalaryComponent component){
 		
-		return null;
+		//service.postEmployeeSalary(component);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
+																			  "Components created Successfully",
+																			  service.postEmployeeSalary(component)));
 	}
 	
 	
 	@GetMapping("/paydetails")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> getEmpSalary(@Valid @RequestBody SalaryComponent component){
+	public ResponseEntity<ApiResponse> getEmpSalary(@Valid @RequestParam String orgId,
+													@Valid @RequestParam String empId){
 		
-		return null;
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
+				  															  "Components created Successfully",
+				  															  service.getEmployeeSalary(orgId, empId)));
 	}
 	
 	

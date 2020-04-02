@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.payload.response.EmployeeByOrgResponse;
 import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 
 @Service
@@ -128,6 +130,28 @@ public class EmpServiceImpl {
 			return true;
 		}
 		
+	}
+	
+	public EmployeeByOrgResponse getEmpListbyOrg(String orgId) {
+		
+		Optional<List<Employee>> emp = empRepo.findByorgId(orgId);
+		
+		if(!emp.isPresent()) {
+			throw new ResourceNotFoundException("No Employees registerd for organization");
+		}
+		
+		EmployeeByOrgResponse response = new EmployeeByOrgResponse();
+		List<String> empIds = new ArrayList<String>();
+		
+		emp.get().forEach(item->{
+			empIds.add(item.getEmpId());
+		});
+		
+		
+		response.setOrgId(orgId);
+		response.setEmpId(empIds);
+		
+		return response;
 	}
 	
 }

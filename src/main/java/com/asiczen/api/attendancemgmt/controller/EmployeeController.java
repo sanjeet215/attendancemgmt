@@ -147,4 +147,15 @@ public class EmployeeController {
 																		 empService.validateEmployee(empId.trim(),orgId.trim())));
 																		 
 	}
+	
+	
+	@GetMapping("/emplist")
+	public ResponseEntity<ApiResponse> getEmployeeByOrganization(@Valid @RequestParam String orgId){
+		
+		logger.debug("Query parameter -->"+orgId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Empoyees retrived successfully",
+																		 empService.getEmpListbyOrg(orgId)));
+	}
 }

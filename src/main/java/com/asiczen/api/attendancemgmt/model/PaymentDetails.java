@@ -32,11 +32,11 @@ public class PaymentDetails extends AuditModel{
 	private String empId;
 	
 	@NotEmpty(message = "componentName is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "componentName should be between 5 to 30 characters")
+	@Size(min = 5, max = 100, message = "componentName should be between 5 to 30 characters")
 	@Column(name = "componentName", nullable = false)
 	private String componentName;
 	
-	@DecimalMin(value = "999.1", inclusive = false)
+	@DecimalMin(value = "1.1", inclusive = false)
 	@DecimalMax(value = "1000000", inclusive = false)
 	private Double quantity;
 
