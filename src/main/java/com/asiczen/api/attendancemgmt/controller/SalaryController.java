@@ -48,7 +48,7 @@ public class SalaryController {
 	public ResponseEntity<ApiResponse> getEmpSalary(@Valid @RequestParam String orgId,
 													@Valid @RequestParam String empId){
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				  															  "Components created Successfully",
 				  															  service.getEmployeeSalary(orgId, empId)));
 	}
@@ -58,7 +58,9 @@ public class SalaryController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> updateEmpSalary(@Valid @RequestBody SalaryComponent component){
 		
-		return null;
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				  														"Components updated Successfully",
+				  														service.updateEmployeeSalary(component)));
 	}
 	
 	
