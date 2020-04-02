@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,6 +86,25 @@ public class FileMobileAppController {
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
+	}
+	
+	
+	@DeleteMapping("/delete")
+	public ResponseEntity<ApiResponse> deleteFile(@Valid @RequestParam String orgId,@Valid @RequestParam String fileName){
+		
+		Path fileStorageLocation = Paths.get(fileBasePath);
+		try {
+			fileStorageService.deleteFile(orgId, fileName, fileStorageLocation);
+		} catch (IOException e) {
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					 "File "+fileName + " can't be removed",
+					 e.getLocalizedMessage()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				 														 "File deleted successfully",
+				 														 "File "+fileName + " removed successfully"));
 	}
 	
 	

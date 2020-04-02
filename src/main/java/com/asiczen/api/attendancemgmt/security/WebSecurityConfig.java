@@ -80,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/emp/validate").permitAll()
 			.antMatchers("/api/file/upload").permitAll()
 			.antMatchers("/api/file/download").permitAll()
+			.antMatchers("/api/file/delete").permitAll()
 			.antMatchers("/api/file/empinouttime").permitAll()
 			.anyRequest().authenticated();
 

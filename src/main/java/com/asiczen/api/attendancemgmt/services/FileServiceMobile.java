@@ -28,26 +28,6 @@ public class FileServiceMobile {
 	@Autowired
 	ZipFolderServiceImpl zipService;
 
-	// @Value("${android.app-dir}")
-	//private String fileBasePath = "D:/projectwork/FingerPrints";
-	
-//	@Value("${android.app-dir}")
-//	private String fileBasePath;
-//
-//	private final Path fileStorageLocation = Paths.get(fileBasePath);
-
-//	@Autowired
-//	public FileServiceMobile() {
-//		this.fileStorageLocation = Paths.get(fileBasePath).toAbsolutePath().normalize();
-//
-//		try {
-//			Files.createDirectories(this.fileStorageLocation);
-//		} catch (Exception ex) {
-//			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
-//					ex);
-//		}
-//	}
-
 	public String storeFile(MultipartFile file, String orgId,Path fileStorageLocation) {
 		// Normalize file name
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -82,6 +62,39 @@ public class FileServiceMobile {
 		}
 	}
 
+	
+	public void deleteFile(String orgId, String fileName, Path fileStorageLocation) throws IOException {
+
+		String targetFileStr = fileStorageLocation + "/" + orgId + "/" + fileName;
+		File targetFile= new File(targetFileStr);
+
+		if (!Files.exists(targetFile.toPath())) {
+			throw new MyFileNotFoundException("File not found " + fileName);
+		}
+		
+		
+		boolean result = Files.deleteIfExists(targetFile.toPath());
+		
+		
+//		try {
+//			String targetFileStr = fileStorageLocation + "/" + orgId + "/" + fileName;
+//			File targetFile = new File(targetFileStr);
+//
+//			if (Files.exists(targetFile.toPath())) {
+//				throw new MyFileNotFoundException("File not found " + fileName);
+//			} else {
+//				boolean result = Files.deleteIfExists(targetFile.toPath());
+//			}
+//
+//		} catch (IOException ex) {
+//			logger.error("Error while deleting the file."+ex.getMessage());
+//		} catch (Exception ep) {
+//			logger.error("Error while removing the file."+ ep.getMessage());
+//		}
+	}
+	
+	
+	
 	public Resource loadFileAsResource(String orgId,Path fileStorageLocation) {
 
 		try {
