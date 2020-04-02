@@ -39,4 +39,7 @@ public class EmpInOut {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(empinout);
 		}
 	}
+	
+	
+	
 }

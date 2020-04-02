@@ -2,6 +2,7 @@ package com.asiczen.api.attendancemgmt.exception;
 
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -199,6 +200,30 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         errors.setStatus(HttpStatus.BAD_REQUEST.value());
         errors.setMessage(ex.getMessage());
 
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(ParseException.class)
+    public ResponseEntity<CustomErrorResponse> invalidDateFormatException(Exception ex, WebRequest request){
+    	
+    	CustomErrorResponse errors = new CustomErrorResponse();
+    	errors.setTimestamp(LocalDateTime.now());
+        errors.setError("Invalid date and time format");
+        errors.setStatus(HttpStatus.BAD_REQUEST.value());
+        errors.setMessage(ex.getMessage());
+    	
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(DateFormatException.class)
+    public ResponseEntity<CustomErrorResponse> dateFormatException(Exception ex, WebRequest request){
+    	
+    	CustomErrorResponse errors = new CustomErrorResponse();
+    	errors.setTimestamp(LocalDateTime.now());
+        errors.setError("Invalid date and time format");
+        errors.setStatus(HttpStatus.BAD_REQUEST.value());
+        errors.setMessage(ex.getMessage());
+    	
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

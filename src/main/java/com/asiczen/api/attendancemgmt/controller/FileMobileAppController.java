@@ -19,13 +19,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.asiczen.api.attendancemgmt.payload.request.EmployeeSwipeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
+import com.asiczen.api.attendancemgmt.services.EmpinoutServicImpl;
 import com.asiczen.api.attendancemgmt.services.FileServiceMobile;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,6 +40,9 @@ public class FileMobileAppController {
 
 	@Autowired
 	private FileServiceMobile fileStorageService;
+	
+	@Autowired
+	private EmpinoutServicImpl empLogService;
 	
 	@Value("${android.app-dir}")
 	private String fileBasePath;
@@ -79,6 +85,26 @@ public class FileMobileAppController {
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
+	}
+	
+	
+	@PostMapping("/empinouttime")
+	public ResponseEntity<ApiResponse> captureLoginLogout(@Valid @RequestBody EmployeeSwipeRequest request){
+		
+		logger.info(request.toString());
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
+																			 "Record Posted Successfully",
+																			 empLogService.postEmpLoginDetails(request)));
+	}
+	
+	@GetMapping("/empinouttime")
+	public ResponseEntity<ApiResponse> getLoginLogoutDetails(@Valid @RequestParam String orgId,
+															 @Valid @RequestParam String empId){
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.CREATED.value(),
+				 														 "Record extracted successfully",
+				 														 empLogService.getEmpLoginDetails(orgId, empId)));
 	}
 
 }
