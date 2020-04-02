@@ -40,7 +40,7 @@ public class PayStructureController {
 	public ResponseEntity<ApiResponse> postComponents(@Valid @RequestBody List<PayStructure> components){
 		
 		//fix-item later
-		String orgid = components.get(1).getOrgId();
+		String orgid = components.get(0).getOrgId();
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 				  															  "Components created Successfully",
@@ -53,7 +53,7 @@ public class PayStructureController {
 	public ResponseEntity<ApiResponse> updateComponents(@Valid @RequestBody List<PayStructure> components){
 		
 		//fix-item later
-		String orgid = components.get(1).getOrgId();
+		String orgid = components.get(0).getOrgId();
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				  															  "Components created Successfully",

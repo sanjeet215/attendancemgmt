@@ -25,7 +25,7 @@ public class PayStructure extends AuditModel {
 	private String orgId;
 
 	@NotEmpty(message = "componentName is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "componentName should be between 5 to 30 characters")
+	@Size(min = 5, max = 100, message = "componentName should be between 5 to 30 characters")
 	@Column(name = "componentName", nullable = false)
 	private String componentName;
 

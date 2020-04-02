@@ -189,5 +189,17 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
+    
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<CustomErrorResponse> badRequestHandler(Exception ex, WebRequest request){
+    	
+    	CustomErrorResponse errors = new CustomErrorResponse();
+        errors.setTimestamp(LocalDateTime.now());
+        errors.setError(ex.getMessage());
+        errors.setStatus(HttpStatus.BAD_REQUEST.value());
+        errors.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 }
 

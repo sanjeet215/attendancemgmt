@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.asiczen.api.attendancemgmt.exception.BadRequestException;
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.PayStructure;
@@ -26,7 +28,16 @@ public class PayStructureServiceImpl {
 	
 	// Generate Pay Structure for organization.
 	
+	@Transactional
 	public List<PayStructure> addSalaryComponents(List<PayStructure> components,String orgId){
+		
+		
+		components.forEach(item ->{
+			if(item.getComponentName().length()< 5 || item.getComponentName().length()>100) {
+				throw new BadRequestException("component length must be between 5 to 100 characters: "+ item.getComponentName());
+			}
+		});
+		
 		
 		Optional<List<PayStructure>> payStructure = paystructRepo.findByorgId(orgId);
 		
@@ -41,17 +52,28 @@ public class PayStructureServiceImpl {
 		});
 		
 		if(!duplicates.isEmpty()) {
-			throw new ResourceAlreadyExistException("Component already in use"+duplicates.toString());
+			throw new ResourceAlreadyExistException("Duplicate data entered , please check the input"+duplicates.toString());
 		}
 		
+//		if(payStructure.isPresent()) {
+//			payStructure.get().forEach(item ->{
+//				Optional<PayStructure> orgpayStructure = paystructRepo.findByOrgIdAndComponentName(orgId, item.getComponentName());
+//				if(orgpayStructure.isPresent()) {
+//					throw new ResourceAlreadyExistException("Component already present"+item.getComponentName());
+//				}
+//			});	
+//		}
+		
 		if(payStructure.isPresent()) {
-			payStructure.get().forEach(item ->{
-				Optional<PayStructure> orgpayStructure = paystructRepo.findByOrgIdAndComponentName(orgId, item.getComponentName());
+			components.forEach(item->{
+				Optional<PayStructure> orgpayStructure = paystructRepo.findByOrgIdAndComponentName(orgId,item.getComponentName());
 				if(orgpayStructure.isPresent()) {
-					throw new ResourceAlreadyExistException("Component already present"+item.getComponentName());
+					throw new ResourceAlreadyExistException("Component already present: "+item.getComponentName());
 				}
-			});	
+			});
 		}
+		
+		
 		
 		return paystructRepo.saveAll(components);
 	}
