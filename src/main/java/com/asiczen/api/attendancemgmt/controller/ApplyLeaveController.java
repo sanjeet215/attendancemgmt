@@ -69,8 +69,6 @@ public class ApplyLeaveController {
 	public ResponseEntity<ApiResponse> getEmpLeaveBalance(@Valid @RequestParam String orgid,
 														  @Valid @RequestParam String empid){
 		
-		//applyLeaveService.getEmpLeaveBalance(orgid, empid);
-		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				 														 "Employee leave data extracted successfully", 
 				 														 applyLeaveService.getEmpLeaveBalance(orgid, empid)));

@@ -46,7 +46,7 @@ public class EmpinoutServicImpl {
 			throw new DateFormatException(e.getLocalizedMessage());
 		}
 		
-		return emplogrepo.save(new Empinout(request.getOrgId(),request.getOrgId(),date,request.getType()));
+		return emplogrepo.save(new Empinout(request.getOrgId(),request.getEmpId(),date,request.getType()));
 		
 	}
 	

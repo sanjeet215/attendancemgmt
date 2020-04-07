@@ -181,7 +181,6 @@ public class AuthController {
 	@GetMapping("/user")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> getAllUser(){
-		//return ResponseEntity.ok(userRepository.findAll());
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		 "All users are extracted successfully",
 																		 userRepository.findAll()));

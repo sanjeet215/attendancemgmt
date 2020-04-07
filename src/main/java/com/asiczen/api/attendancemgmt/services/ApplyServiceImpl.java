@@ -82,9 +82,7 @@ public class ApplyServiceImpl {
 		
 		Optional<List<User>> moderators = userRepo.findByorgId(appliedLeave.getOrgId());
 		if(moderators.isPresent()) {
-			moderators.get().forEach(item->{
-				emailList.add(item.getEmail());
-			});
+			moderators.get().forEach(item->emailList.add(item.getEmail()));
 		}
 		
 		emailList.forEach(item->{
