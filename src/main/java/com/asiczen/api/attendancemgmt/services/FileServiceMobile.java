@@ -38,7 +38,6 @@ public class FileServiceMobile {
 		try {
 			if (orgDir.exists() && orgDir.isDirectory()) {
 				logger.debug("Directory already exists, so file should be placed under it..");
-				//System.out.println("For Testing only, Please delete after");
 			} else {
 				Files.createDirectories(orgDir.toPath());
 			}
@@ -73,24 +72,7 @@ public class FileServiceMobile {
 		}
 		
 		
-		boolean result = Files.deleteIfExists(targetFile.toPath());
-		
-		
-//		try {
-//			String targetFileStr = fileStorageLocation + "/" + orgId + "/" + fileName;
-//			File targetFile = new File(targetFileStr);
-//
-//			if (Files.exists(targetFile.toPath())) {
-//				throw new MyFileNotFoundException("File not found " + fileName);
-//			} else {
-//				boolean result = Files.deleteIfExists(targetFile.toPath());
-//			}
-//
-//		} catch (IOException ex) {
-//			logger.error("Error while deleting the file."+ex.getMessage());
-//		} catch (Exception ep) {
-//			logger.error("Error while removing the file."+ ep.getMessage());
-//		}
+		Files.deleteIfExists(targetFile.toPath());
 	}
 	
 	

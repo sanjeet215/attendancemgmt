@@ -12,9 +12,9 @@
 	<groupId>com.asiczen.api</groupId>
 	<artifactId>attendancemgmt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-		
-	<packaging>war</packaging>	
-	
+
+	<packaging>war</packaging>
+
 	<name>attendancemgmt</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -82,6 +82,12 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
