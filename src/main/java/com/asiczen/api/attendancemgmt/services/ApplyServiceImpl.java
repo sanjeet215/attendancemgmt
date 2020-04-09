@@ -140,6 +140,24 @@ public class ApplyServiceImpl {
 		
 	}
 	
+	/*duplicate method */
+	
+	public List<AppliedLeaves> getApprovedLeaves(String orgId, String empId, String status) {
+
+		Optional<List<AppliedLeaves>> leaves = appliedLeavesRepo.findByOrgIdAndEmpIdAndStatus(orgId, empId, status);
+
+		List<AppliedLeaves> returnList = new ArrayList<>();
+
+		if (leaves.isPresent()) {
+			returnList = leaves.get();
+		} else {
+
+		}
+
+		return returnList;
+
+	}
+	
 	/* My Pending approvals screen. This is to show leaves which are pending to be approved */
 
 	public List<AppliedLeaves> getLeaveswithOrgandStatus(String orgId,String status){
@@ -168,7 +186,6 @@ public class ApplyServiceImpl {
 	public LeaveBalanceResponse getEmpLeaveBalance(String orgId,String empId) {
 		
 		HashMap<String, Double> mapOrg = new HashMap<>();
-		//HashMap<String, Integer> mapEmp = new HashMap<>();
 		
 		Optional<List<LeaveTypes>> orgLeaves = leaveRepository.findByOrgIdAndStatus(orgId, true);
 		
@@ -182,7 +199,6 @@ public class ApplyServiceImpl {
 		Optional<List<AppliedLeaves>> empLeaves = appliedLeavesRepo.findByOrgIdAndEmpId(orgId, empId);
 		
 		if(!empLeaves.isPresent()) {
-//			throw new ResourceNotFoundException("Employee with orgid: "+orgId+ " and empId:"+empId+" is not registered yet.");
 			logger.info("Employee have not applied any leaves before.");
 		} else {
 			
@@ -199,7 +215,6 @@ public class ApplyServiceImpl {
 		}
 		
 		logger.debug(mapOrg.toString());
-//		System.out.println(mapOrg.toString());
 		
 		List<LeaveBalance> leaves = new ArrayList<>();
 		

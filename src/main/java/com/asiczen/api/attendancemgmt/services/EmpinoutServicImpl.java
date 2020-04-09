@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,7 @@ public class EmpinoutServicImpl {
 	
 	public List<Empinout> getEmpLoginDetails(String orgId,String empId){
 		
-		Optional<List<Empinout>> dataList = emplogrepo.findByOrgIdAndEmpId(orgId, empId);
+		Optional<List<Empinout>> dataList = emplogrepo.findByOrgIdAndEmpIdOrderByTimeStampAsc(orgId, empId);
 		
 		if(!dataList.isPresent()) {
 			throw new ResourceNotFoundException("No data posted for OrgId: "+orgId+ " and empId: "+empId);

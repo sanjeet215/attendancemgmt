@@ -11,6 +11,6 @@ import com.asiczen.api.attendancemgmt.model.Empinout;
 @Repository
 public interface EmpinoutRepository extends JpaRepository<Empinout,Long>{
 	
-	Optional<List<Empinout>> findByOrgIdAndEmpId(String orgId,String empId);
+	Optional<List<Empinout>> findByOrgIdAndEmpIdOrderByTimeStampAsc(String orgId,String empId);
 
 }
