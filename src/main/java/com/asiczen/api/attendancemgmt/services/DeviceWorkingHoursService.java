@@ -80,11 +80,10 @@ public class DeviceWorkingHoursService {
 
 				LocalDate keyDate = item.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-				if (Boolean.FALSE.equals(deviceData.get(keyDate))) {
-
-				} else {
-					deviceData.put(keyDate, false);
+				if(Boolean.FALSE.equals(deviceData.get(keyDate))) {
+					deviceData.put(keyDate,true);
 				}
+				
 			});
 		}
 
@@ -160,10 +159,10 @@ public class DeviceWorkingHoursService {
 	private void populateMap(LinkedHashMap<LocalDate, Boolean> dateMap, LocalDate startOfMonth, LocalDate endOfMonth) {
 
 		for (LocalDate date = startOfMonth; date.isBefore(endOfMonth); date = date.plusDays(1)) {
-			dateMap.put(date, true);
+			dateMap.put(date, false);
 		}
 
-		dateMap.put(endOfMonth, true);
+		dateMap.put(endOfMonth, false);
 
 	}
 }
