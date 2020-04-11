@@ -152,8 +152,8 @@ public class EmpServiceImpl {
 
 	public Employee updateEmployee(@Valid EmployeeRequest empRequest) {
 
-		if (orgRepo.existsByorganizationDisplayName(empRequest.getOrgId())) {
-			throw new ResourceAlreadyExistException("Organization doesn't exist");
+		if (!orgRepo.existsByorganizationDisplayName(empRequest.getOrgId())) {
+			throw new ResourceNotFoundException("Organization doesn't exist");
 		}
 
 		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(empRequest.getPhoneNo());
@@ -164,8 +164,6 @@ public class EmpServiceImpl {
 
 		/* Get Department from Department name */
 		
-		System.out.println(empRequest.getDept()+"------>"+empRequest.getOrgId());
-
 		Optional<List<Department>> department = deptRepo.findBydeptNameAndOrgId(empRequest.getDept(),empRequest.getOrgId());
 
 		if (!department.isPresent()) {
