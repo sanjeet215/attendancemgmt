@@ -50,8 +50,8 @@ public class EmpServiceImpl {
 
 	public Employee addNewEmployee(Employee emp) {
 
-		if (orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
-			throw new ResourceAlreadyExistException("Organization doesn't exist");
+		if (!orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
+			throw new ResourceNotFoundException("Organization doesn't exist "+ emp.getOrgId());
 		}
 
 		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(emp.getPhoneNo());
