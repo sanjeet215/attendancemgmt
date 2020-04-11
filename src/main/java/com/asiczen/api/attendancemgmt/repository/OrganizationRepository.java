@@ -20,8 +20,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
 	
 	Optional<Organization> findByorganizationcontact(String phoneNo);
 	
-	
-	
 	Optional<Organization> findByorganizationDisplayNameAndStatus(String orgId,String status);
 	
 }

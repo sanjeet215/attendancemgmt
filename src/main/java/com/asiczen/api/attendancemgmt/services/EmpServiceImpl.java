@@ -11,18 +11,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.model.Organization;
 import com.asiczen.api.attendancemgmt.payload.response.EmployeeByOrgResponse;
 import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
+import com.asiczen.api.attendancemgmt.repository.OrganizationRepository;
 
 @Service
 public class EmpServiceImpl {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmpServiceImpl.class);
-	
+
 	@Autowired
 	EmployeeRepository empRepo;
+	
+	@Autowired
+	OrganizationRepository orgRepo;
 
 	/* Get All Employees */
 	public List<Employee> getAllEmployees() {
@@ -37,6 +43,23 @@ public class EmpServiceImpl {
 	/* Add new Employee */
 
 	public Employee addNewEmployee(Employee emp) {
+		
+		if(orgRepo.existsByorganizationDisplayName(emp.getOrgId())){
+			throw new ResourceAlreadyExistException("Organization doesn't exist");
+		}
+
+		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(emp.getPhoneNo());
+
+		if (findEmpByNumber.isPresent()) {
+			throw new ResourceAlreadyExistException("Phone no is already in Use!");
+		}
+
+		Optional<Employee> findEmpbyEmpid = empRepo.findByempId("Emp id is already in use");
+
+		if (findEmpbyEmpid.isPresent()) {
+			throw new ResourceAlreadyExistException("Employee Id is already in Use!");
+		}
+
 		return empRepo.save(emp);
 	}
 
@@ -89,8 +112,7 @@ public class EmpServiceImpl {
 		return emp.get();
 	}
 
-	
-	/*Count of Employees By Organization Id */
+	/* Count of Employees By Organization Id */
 	public Long countEmployeebyOrganization(String orgId, boolean status) {
 		Optional<Long> count = empRepo.countByOrgIdAndEmpStatus(orgId, status);
 		if (!count.isPresent()) {
@@ -99,10 +121,17 @@ public class EmpServiceImpl {
 			return count.get();
 		}
 	}
-	
-	
-	/* Get Employee by email Id for MY Profile*/
-	
+
+	/* Count of All Employees for Super Admin */
+
+	public Long countEmployee() {
+		return empRepo.count();
+
+		
+	}
+
+	/* Get Employee by email Id for MY Profile */
+
 	public Employee findByEmailid(String emailId) {
 
 		Optional<Employee> emp = empRepo.findByempEmailId(emailId);
@@ -114,42 +143,41 @@ public class EmpServiceImpl {
 		}
 
 	}
-	
-	
-	/* Validate Employee , Mobile end point*/
-	
-	public boolean validateEmployee(String empId,String orgId) {
-		
-		Optional<Employee> emp = empRepo.findByEmpIdAndEmpStatusAndOrgId(empId, true,orgId);
-		
-		if(!emp.isPresent()) {
-			throw new ResourceNotFoundException("Employee with empId: "+empId+" and OrgId: "+orgId+" not found in database");
+
+	/* Validate Employee , Mobile end point */
+
+	public boolean validateEmployee(String empId, String orgId) {
+
+		Optional<Employee> emp = empRepo.findByEmpIdAndEmpStatusAndOrgId(empId, true, orgId);
+
+		if (!emp.isPresent()) {
+			throw new ResourceNotFoundException(
+					"Employee with empId: " + empId + " and OrgId: " + orgId + " not found in database");
 		} else {
 			return true;
 		}
-		
+
 	}
-	
+
 	public EmployeeByOrgResponse getEmpListbyOrg(String orgId) {
-		
+
 		Optional<List<Employee>> emp = empRepo.findByorgId(orgId);
-		
-		if(!emp.isPresent()) {
+
+		if (!emp.isPresent()) {
 			throw new ResourceNotFoundException("No Employees registerd for organization");
 		}
-		
+
 		EmployeeByOrgResponse response = new EmployeeByOrgResponse();
 		List<String> empIds = new ArrayList<String>();
-		
-		emp.get().forEach(item->{
+
+		emp.get().forEach(item -> {
 			empIds.add(item.getEmpId());
 		});
-		
-		
+
 		response.setOrgId(orgId);
 		response.setEmpId(empIds);
-		
+
 		return response;
 	}
-	
+
 }

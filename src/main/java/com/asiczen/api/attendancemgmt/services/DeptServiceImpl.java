@@ -27,23 +27,14 @@ public class DeptServiceImpl {
 
 		Optional<Department> department = deptRepo.findBydeptId(dept.getDeptId());
 
+		/* By Default Department Should be active */
+		dept.setStatus(true);
+		
 		if (department.isPresent()) {
 			logger.error("Organization Id" + dept.getDeptId() + "already exist in Database");
 			throw new ResourceAlreadyExistException(dept.getDeptName());
 		}
 
-		
-//		Optional<List<Department>> departmentListbyName = deptRepo.findBydeptName(dept.getDeptName());
-//		
-//		if(departmentbyName.isPresent()) {
-//			if(departmentbyName.get().getOrgId().equalsIgnoreCase(dept.getDeptName())) {
-//				throw new ResourceAlreadyExistException("Dept Name "+dept.getDeptName()+ " for Organization "+dept.getOrgId()+" alrady exist.");
-//			}
-//		}
-			
-		
-		
-		
 		return deptRepo.save(dept);
 	}
 

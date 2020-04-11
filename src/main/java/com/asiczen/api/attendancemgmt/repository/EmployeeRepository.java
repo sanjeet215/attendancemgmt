@@ -15,8 +15,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	
 	Boolean existsByempEmailId(String emailId);
 	
-	Employee findByphoneNo(String phoneNo);
-	
 	Boolean existsByphoneNo(String phoneNo);
 	
 	Optional<List<Employee>> findByOrgIdAndEmpStatus(String orgId,String status);
@@ -28,6 +26,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	Optional<Employee> findByEmpIdAndEmpStatusAndOrgId(String empId,boolean empStatus,String orgId);
 	
 	Optional<List<Employee>> findByorgId(String orgId);
+	
+	Optional<Employee> findByempId(String empid);
+	
+	Optional<Employee> findByphoneNo(String phoneNo);
 	
 }
 

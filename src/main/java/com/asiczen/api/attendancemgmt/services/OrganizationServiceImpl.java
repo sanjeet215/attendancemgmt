@@ -47,7 +47,6 @@ public class OrganizationServiceImpl {
 			throw new ResourceAlreadyExistException(org.getOrganizationcontact());
 		}
 		
-		
 		return orgRepo.save(org);
 	}
 
@@ -93,6 +92,11 @@ public class OrganizationServiceImpl {
 		} else {
 			return true;
 		}
+	}
+	
+	
+	public Long countOrganization() {
+		return orgRepo.count();
 	}
 
 }
