@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.EmpDeptCountResponse;
+import com.asiczen.api.attendancemgmt.payload.response.EmployeeDepartmentResponse;
 import com.asiczen.api.attendancemgmt.services.DeptServiceImpl;
 import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
 import com.asiczen.api.attendancemgmt.services.OrganizationServiceImpl;
@@ -152,7 +153,7 @@ public class EmployeeController {
 			orgnizationCount.setCountType("OrgCount");
 			orgnizationCount.setCount(orgService.countOrganization());
 			count.add(orgnizationCount);
-			
+
 		} catch (Exception ep) {
 			logger.error("Error while extracting the count" + ep.getLocalizedMessage());
 		}
@@ -160,12 +161,10 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse(HttpStatus.OK.value(), "Emp/Dept Count extracted", count));
 	}
-	
 
 	@GetMapping("/emp/validate")
 	public ResponseEntity<ApiResponse> validateEmployee(@Valid @RequestParam String empId,
 			@Valid @RequestParam String orgId) {
-		logger.debug("Query parameter empId--> " + empId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Emp with empId: " + empId + "found", empService.validateEmployee(empId.trim(), orgId.trim())));
@@ -174,8 +173,6 @@ public class EmployeeController {
 
 	@GetMapping("/emplist")
 	public ResponseEntity<ApiResponse> getEmployeeByOrganization(@Valid @RequestParam String orgId) {
-
-		logger.debug("Query parameter -->" + orgId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Empoyees retrived successfully", empService.getEmpListbyOrg(orgId)));
@@ -193,4 +190,27 @@ public class EmployeeController {
 				.body(new ApiResponse(HttpStatus.OK.value(), "image uploaded successfully",
 						storageService.storeFile(file, orgId + "." + empId, fileStorageLocation)));
 	}
+
+	/* Data for Employee and Department dropdown */
+
+	@GetMapping("/empdeptlist")
+	public ResponseEntity<ApiResponse> getEmployeeDepartmentByOrganization(@Valid @RequestParam String orgId) {
+
+		List<String> empidList = empService.getEmpListbyOrg(orgId).getEmpId();
+		List<String> deptList = new ArrayList<>();
+
+		deptService.getDepartmentsByOrg(orgId).forEach(item -> {
+			deptList.add(item.getDeptName());
+		});
+
+		EmployeeDepartmentResponse response = new EmployeeDepartmentResponse();
+
+		response.setOrgId(orgId);
+		response.setEmployeeList(empidList);
+		response.setDepartmentList(deptList);
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Employee Id and Deptnames extracted successfully", response));
+	}
+
 }

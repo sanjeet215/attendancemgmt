@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +59,6 @@ public class DeptServiceImpl {
 			
 			ndepartment.setDeptName(newDept.getDeptName());
 			ndepartment.setDescription(newDept.getDescription());
-			//ndepartment.setOrgId(newDept.getOrgId());
 			ndepartment.setStatus(newDept.isStatus());
 
 			return deptRepo.save(ndepartment);
@@ -79,8 +79,23 @@ public class DeptServiceImpl {
 		} else {
 			return count.get();
 		}
+	}
+	
+	
+	// Department by OrgId
+	public List<Department> getDepartmentsByOrg(String orgId){
 		
+		Optional<List<Department>> deptList = deptRepo.findByOrgIdAndStatus(orgId, true);
+		
+		if(deptList.isPresent()) {
+			return deptList.get();
+		} else {
+			
+			List<Department> depts = new ArrayList<>();
+			return depts;
+		}
 		
 	}
+	
 
 }

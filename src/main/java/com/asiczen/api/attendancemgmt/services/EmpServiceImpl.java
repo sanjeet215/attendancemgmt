@@ -168,7 +168,7 @@ public class EmpServiceImpl {
 		}
 
 		EmployeeByOrgResponse response = new EmployeeByOrgResponse();
-		List<String> empIds = new ArrayList<String>();
+		List<String> empIds = new ArrayList<>();
 
 		emp.get().forEach(item -> {
 			empIds.add(item.getEmpId());
