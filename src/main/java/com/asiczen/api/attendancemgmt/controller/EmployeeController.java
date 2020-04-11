@@ -60,8 +60,6 @@ public class EmployeeController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody Employee emp){
 		
-		logger.info("Test COntroller"+ emp.getOrgId());
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 																					   "Employee Created Successfully",
 																					   empService.addNewEmployee(emp)));

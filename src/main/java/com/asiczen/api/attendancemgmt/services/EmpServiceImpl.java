@@ -37,8 +37,6 @@ public class EmpServiceImpl {
 	/* Add new Employee */
 
 	public Employee addNewEmployee(Employee emp) {
-		logger.info("TestLine Testline" + emp.getOrgId());
-		
 		return empRepo.save(emp);
 	}
 

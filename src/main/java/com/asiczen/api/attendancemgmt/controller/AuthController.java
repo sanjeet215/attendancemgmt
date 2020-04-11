@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.model.ERole;
+import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.Role;
 import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.request.LoginRequest;
@@ -39,6 +40,7 @@ import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
 import com.asiczen.api.attendancemgmt.services.EmailServiceImpl;
+import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
 import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
 
 
@@ -74,9 +76,10 @@ public class AuthController {
 	
 	@Autowired
 	EmailServiceImpl emailService;
+
+	@Autowired
+	EmpServiceImpl employeeService;
 	
-//	@Autowired
-//	ModeratorRepository modRepo;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -154,23 +157,24 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
-		//userRepository.save(user);
-		//return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-		
 		String credentials = "User Name: "+user.getUsername()+ "\nPassword: "+signUpRequest.getPassword();
 		
-//		roles.forEach(item->{
-//			logger.info("User Role"+item.getName().toString());
-//			if(item.getName().toString().contains("ROLE_USER")) {
-//				
-//			} else {
-//				modRepo.save(new Moderator(user.getOrgId(),user.getEmail(),user.getUsername(),true));
-//			}
-//		});
-		
-		
-		
 		emailService.emailData(mailFrom,user.getEmail(), mailcontent+credentials, "User registered successfully!");
+
+		/* Section is to populate employee Details with minimum data
+		 * */
+		Employee emp = new Employee();
+		
+		emp.setEmpEmailId(signUpRequest.getEmail());
+		emp.setEmpFirstName(signUpRequest.getUsername());
+		emp.setEmpId(signUpRequest.getEmpId());
+		emp.setOrgId(signUpRequest.getOrgId());
+		emp.setPhoneNo(signUpRequest.getPhoneNo());
+		emp.setEmpLsatName("LastName");
+		emp.setEmpStatus(true);
+		employeeService.addNewEmployee(emp);
+		
+		
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 															  				  "User registered successfully!",

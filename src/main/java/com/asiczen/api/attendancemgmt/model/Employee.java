@@ -35,7 +35,7 @@ public class Employee extends AuditModel {
 
 	@NotEmpty(message = "emplname is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "emplname should be between 5 to 10 characters")
-	@Column(name = "emplname", unique = false, nullable = false)
+	@Column(name = "emplname")
 	String empLsatName;
 
 	@NotEmpty(message = "empEmailId is required/Can't be blank")
@@ -45,10 +45,10 @@ public class Employee extends AuditModel {
 	@Email
 	String empEmailId;
 
-	@Column(name = "nationalId", nullable = false)
+	@Column(name = "nationalId", nullable = true)
 	String nationalId;
 
-	@Column(name = "empGender", nullable = false)
+	@Column(name = "empGender", nullable = true)
 	String empGender;
 
 	Date Dob;

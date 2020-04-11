@@ -13,7 +13,7 @@
 	<artifactId>attendancemgmt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<!-- <packaging>war</packaging> -->
+	<packaging>war</packaging>
 
 	<name>attendancemgmt</name>
 	<description>Demo project for Spring Boot</description>
@@ -84,7 +84,7 @@
 			<version>3.12</version>
 		</dependency>
 
-<!-- 		<dependency>
+<!--  		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
