@@ -1,31 +1,14 @@
-package com.asiczen.api.attendancemgmt.model;
+package com.asiczen.api.attendancemgmt.payload.request;
 
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-@Table(name = "employee")
-public class Employee extends AuditModel {
-
-	private static final long serialVersionUID = 3077034967531048897L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+public class EmployeeRequest {
 
 	@NotEmpty(message = "empId is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "empId should be between 5 to 10 characters")
@@ -44,7 +27,7 @@ public class Employee extends AuditModel {
 
 	@NotEmpty(message = "empEmailId is required/Can't be blank")
 	@Size(min = 5, max = 50, message = "empEmailId should be between 5 to 50 characters")
-	@Column(name = "empEmailId", unique = true, nullable = false ,length = 50)
+	@Column(name = "empEmailId", unique = true, nullable = false, length = 50)
 	@Pattern(regexp = "^(.+)@(.+)$", message = "Email Id is invalid")
 	@Email
 	private String empEmailId;
@@ -66,7 +49,7 @@ public class Employee extends AuditModel {
 	@NotEmpty(message = "empPhoneNo is required/Can't be blank")
 	@Size(min = 5, max = 10, message = "empPhoneNo should be between 5 to 10 characters")
 	@Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message = "Mobile number is invalid")
-	@Column(name = "empPhoneNo", unique = true, nullable = false)
+	@Column(name = "phoneNo", unique = true, nullable = false)
 	private String phoneNo;
 
 	private String address;
@@ -85,23 +68,14 @@ public class Employee extends AuditModel {
 
 	private boolean empStatus;
 
+	@NotEmpty(message = "orgId is required/Can't be blank")
 	@Column(name = "orgid", nullable = false)
 	private String orgId;
-	
-	@ManyToOne
-	@JoinColumn(name ="DEPT_ID")
-	private Department dept;
 
-	public Employee() {
+	private String dept;
+
+	public EmployeeRequest() {
 		super();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getEmpId() {
@@ -264,14 +238,22 @@ public class Employee extends AuditModel {
 		this.orgId = orgId;
 	}
 
-	public Department getDept() {
+	public String getDept() {
 		return dept;
 	}
 
-	public void setDept(Department dept) {
+	public void setDept(String dept) {
 		this.dept = dept;
 	}
-	
 
-	
+	@Override
+	public String toString() {
+		return "EmployeeRequest [empId=" + empId + ", empFirstName=" + empFirstName + ", empLsatName=" + empLsatName
+				+ ", empEmailId=" + empEmailId + ", nationalId=" + nationalId + ", empGender=" + empGender + ", Dob="
+				+ Dob + ", Doj=" + Doj + ", maritalStatus=" + maritalStatus + ", fatherName=" + fatherName
+				+ ", phoneNo=" + phoneNo + ", address=" + address + ", city=" + city + ", country=" + country
+				+ ", postalCode=" + postalCode + ", designation=" + designation + ", workingLocation=" + workingLocation
+				+ ", empType=" + empType + ", empStatus=" + empStatus + ", orgId=" + orgId + ", dept=" + dept + "]";
+	}
+
 }

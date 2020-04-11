@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.payload.request.EmployeeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.EmpDeptCountResponse;
 import com.asiczen.api.attendancemgmt.payload.response.EmployeeDepartmentResponse;
@@ -56,14 +57,12 @@ public class EmployeeController {
 	@Value("${emp.image.upload-dir}")
 	private String fileBasePath;
 
-	/* Create New Employee */
-
 	@PostMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody Employee emp) {
+	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody EmployeeRequest employee) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
-				"Employee Created Successfully", empService.addNewEmployee(emp)));
+				"Employee Created Successfully", empService.postEmployee(employee)));
 	}
 
 	/* Get all Employees */
@@ -76,10 +75,10 @@ public class EmployeeController {
 
 	/* Update Employee */
 	@PutMapping("/emp")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> updateEmployee(@Valid @RequestBody Employee emp) {
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	public ResponseEntity<ApiResponse> updateEmployee(@Valid @RequestBody EmployeeRequest emp) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Organization Created Successfully", empService.updateEmployee(emp)));
+				"Employee updated Successfully", empService.updateEmployee(emp)));
 
 	}
 
@@ -102,7 +101,6 @@ public class EmployeeController {
 	@GetMapping("/emp/count")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
 	public ResponseEntity<ApiResponse> countEmpByOrganization(@Valid @RequestParam String orgid) {
-		logger.debug("Incoming Organization id: " + orgid);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee Count extracted", empService.countEmployeebyOrganization(orgid, true)));
@@ -209,8 +207,8 @@ public class EmployeeController {
 		response.setEmployeeList(empidList);
 		response.setDepartmentList(deptList);
 
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Employee Id and Deptnames extracted successfully", response));
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new ApiResponse(HttpStatus.OK.value(), "Employee Id and Deptnames extracted successfully", response));
 	}
 
 }

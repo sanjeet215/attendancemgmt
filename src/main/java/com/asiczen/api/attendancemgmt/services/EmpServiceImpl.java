@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
+import com.asiczen.api.attendancemgmt.model.Department;
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.Organization;
+import com.asiczen.api.attendancemgmt.payload.request.EmployeeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.EmployeeByOrgResponse;
+import com.asiczen.api.attendancemgmt.repository.DepartmentRepository;
 import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 import com.asiczen.api.attendancemgmt.repository.OrganizationRepository;
 
@@ -26,9 +29,12 @@ public class EmpServiceImpl {
 
 	@Autowired
 	EmployeeRepository empRepo;
-	
+
 	@Autowired
 	OrganizationRepository orgRepo;
+
+	@Autowired
+	DepartmentRepository deptRepo;
 
 	/* Get All Employees */
 	public List<Employee> getAllEmployees() {
@@ -43,8 +49,8 @@ public class EmpServiceImpl {
 	/* Add new Employee */
 
 	public Employee addNewEmployee(Employee emp) {
-		
-		if(orgRepo.existsByorganizationDisplayName(emp.getOrgId())){
+
+		if (orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
 			throw new ResourceAlreadyExistException("Organization doesn't exist");
 		}
 
@@ -63,38 +69,138 @@ public class EmpServiceImpl {
 		return empRepo.save(emp);
 	}
 
+	/* Add Employee Final Method , 1st method will be removed after testing */
+	public Employee postEmployee(EmployeeRequest emp) {
+
+		if (orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
+			throw new ResourceAlreadyExistException("Organization doesn't exist");
+		}
+
+		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(emp.getPhoneNo());
+
+		if (findEmpByNumber.isPresent()) {
+			throw new ResourceAlreadyExistException("Phone no is already in Use!");
+		}
+
+		Optional<Employee> findEmpbyEmpid = empRepo.findByempId("Emp id is already in use");
+
+		if (findEmpbyEmpid.isPresent()) {
+			throw new ResourceAlreadyExistException("Employee Id is already in Use!");
+		}
+
+		/* Get Department from Department name */
+
+		Optional<List<Department>> department = deptRepo.findBydeptNameAndOrgId(emp.getDept(), emp.getOrgId());
+
+		if (!department.isPresent()) {
+			throw new ResourceNotFoundException("Department doesn't exist with Deptname: " + emp.getDept());
+		} else {
+
+			Employee employee = new Employee();
+			populateEmployeeObject(emp, employee, department.get().get(0));
+			return empRepo.save(employee);
+		}
+
+	}
+
+	private void populateEmployeeObject(EmployeeRequest empRequest, Employee employee, Department department) {
+		employee.setEmpId(empRequest.getEmpId());
+		employee.setDept(department);
+		employee.setOrgId(empRequest.getOrgId());
+		employee.setEmpEmailId(empRequest.getEmpEmailId());
+		employee.setEmpFirstName(empRequest.getEmpFirstName());
+		employee.setEmpStatus(true);
+		employee.setPhoneNo(empRequest.getPhoneNo());
+	}
+
 	/* Update Employee */
-	public Employee updateEmployee(@Valid Employee emp) {
+	// public Employee updateEmployee(@Valid Employee emp) {
+	//
+	// Optional<Employee> employee = empRepo.findById(emp.getId());
+	// if (!employee.isPresent())
+	// throw new ResourceNotFoundException("Emp with Id: " + emp.getId() + " not
+	// found");
+	//
+	// return empRepo.findById(emp.getId()).map(nemp -> {
+	// nemp.setEmpId(emp.getEmpId());
+	// nemp.setEmpFirstName(emp.getEmpFirstName());
+	// nemp.setEmpLsatName(emp.getEmpLsatName());
+	// nemp.setEmpEmailId(emp.getEmpEmailId());
+	// nemp.setNationalId(emp.getNationalId());
+	// nemp.setEmpGender(emp.getEmpGender());
+	// nemp.setDob(emp.getDob());
+	// nemp.setDoj(emp.getDoj());
+	// nemp.setMaritalStatus(emp.getMaritalStatus());
+	// nemp.setFatherName(emp.getFatherName());
+	//
+	// nemp.setPhoneNo(emp.getPhoneNo());
+	// nemp.setAddress(emp.getAddress());
+	// nemp.setCity(emp.getCity());
+	// nemp.setCountry(emp.getCountry());
+	// nemp.setPostalCode(emp.getPostalCode());
+	// nemp.setDesignation(emp.getDesignation());
+	// nemp.setWorkingLocation(emp.getWorkingLocation());
+	// nemp.setEmpType(emp.getEmpType());
+	// nemp.setEmpStatus(emp.isEmpStatus());
+	// nemp.setOrgId(emp.getOrgId());
+	// return empRepo.save(nemp);
+	//
+	// }).orElseThrow(() -> new ResourceNotFoundException("Employee with Emp id : "
+	// + emp.getEmpId() + "not found"));
+	//
+	// }
 
-		Optional<Employee> employee = empRepo.findById(emp.getId());
+	public Employee updateEmployee(@Valid EmployeeRequest empRequest) {
+
+		if (orgRepo.existsByorganizationDisplayName(empRequest.getOrgId())) {
+			throw new ResourceAlreadyExistException("Organization doesn't exist");
+		}
+
+		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(empRequest.getPhoneNo());
+
+		if (findEmpByNumber.isPresent() && !empRequest.getEmpId().equals(empRequest.getEmpId())) {
+			throw new ResourceAlreadyExistException("Phone no is already in Use!");
+		}
+
+		/* Get Department from Department name */
+		
+		System.out.println(empRequest.getDept()+"------>"+empRequest.getOrgId());
+
+		Optional<List<Department>> department = deptRepo.findBydeptNameAndOrgId(empRequest.getDept(),empRequest.getOrgId());
+
+		if (!department.isPresent()) {
+			throw new ResourceNotFoundException("Department doesn't exist with Deptname: " + empRequest.getDept());
+		}
+
+		Optional<Employee> employee = empRepo.findByempId(empRequest.getEmpId());
 		if (!employee.isPresent())
-			throw new ResourceNotFoundException("Emp with Id: " + emp.getId() + " not found");
+			throw new ResourceNotFoundException("Emp with Id: " + empRequest.getEmpId() + " not found");
 
-		return empRepo.findById(emp.getId()).map(nemp -> {
-			nemp.setEmpId(emp.getEmpId());
-			nemp.setEmpFirstName(emp.getEmpFirstName());
-			nemp.setEmpLsatName(emp.getEmpLsatName());
-			nemp.setEmpEmailId(emp.getEmpEmailId());
-			nemp.setNationalId(emp.getNationalId());
-			nemp.setEmpGender(emp.getEmpGender());
-			nemp.setDob(emp.getDob());
-			nemp.setDoj(emp.getDoj());
-			nemp.setMaritalStatus(emp.getMaritalStatus());
-			nemp.setFatherName(emp.getFatherName());
-
-			nemp.setPhoneNo(emp.getPhoneNo());
-			nemp.setAddress(emp.getAddress());
-			nemp.setCity(emp.getCity());
-			nemp.setCountry(emp.getCountry());
-			nemp.setPostalCode(emp.getPostalCode());
-			nemp.setDesignation(emp.getDesignation());
-			nemp.setWorkingLocation(emp.getWorkingLocation());
-			nemp.setEmpType(emp.getEmpType());
-			nemp.setEmpStatus(emp.isEmpStatus());
-			nemp.setOrgId(emp.getOrgId());
+		return empRepo.findByempId(empRequest.getEmpId()).map(nemp -> {
+			nemp.setEmpId(empRequest.getEmpId());
+			nemp.setEmpFirstName(empRequest.getEmpFirstName());
+			nemp.setEmpLsatName(empRequest.getEmpLsatName());
+			nemp.setNationalId(empRequest.getNationalId());
+			nemp.setEmpGender(empRequest.getEmpGender());
+			nemp.setDob(empRequest.getDob());
+			nemp.setDoj(empRequest.getDoj());
+			nemp.setMaritalStatus(empRequest.getMaritalStatus());
+			nemp.setFatherName(empRequest.getFatherName());
+			nemp.setPhoneNo(empRequest.getPhoneNo());
+			nemp.setAddress(empRequest.getAddress());
+			nemp.setCity(empRequest.getCity());
+			nemp.setCountry(empRequest.getCountry());
+			nemp.setPostalCode(empRequest.getPostalCode());
+			nemp.setDesignation(empRequest.getDesignation());
+			nemp.setWorkingLocation(empRequest.getWorkingLocation());
+			nemp.setEmpType(empRequest.getEmpType());
+			nemp.setEmpStatus(empRequest.isEmpStatus());
+			nemp.setOrgId(empRequest.getOrgId());
+			//nemp.setDept(department.get().get(0));
 			return empRepo.save(nemp);
 
-		}).orElseThrow(() -> new ResourceNotFoundException("Employee with Emp id : " + emp.getEmpId() + "not found"));
+		}).orElseThrow(
+				() -> new ResourceNotFoundException("Employee with Emp id : " + empRequest.getEmpId() + "not found"));
 
 	}
 
@@ -127,7 +233,6 @@ public class EmpServiceImpl {
 	public Long countEmployee() {
 		return empRepo.count();
 
-		
 	}
 
 	/* Get Employee by email Id for MY Profile */

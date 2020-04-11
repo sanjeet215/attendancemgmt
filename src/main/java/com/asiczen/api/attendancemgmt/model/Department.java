@@ -1,15 +1,20 @@
 package com.asiczen.api.attendancemgmt.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Department", uniqueConstraints = @UniqueConstraint(columnNames = { "deptName", "orgId" }))
@@ -38,21 +43,12 @@ public class Department extends AuditModel {
 	@NotNull
 	private boolean status;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "dept")
+	private List<Employee> emps;
+
 	public Department() {
 		super();
-	}
-
-	public Department(Long deptId,
-			@NotEmpty(message = "Department Name is required/Can't be blank") @Size(min = 5, max = 10, message = "deptName should be between 5 to 10 characters") String deptName,
-			@NotEmpty(message = "Department Description is required/Can't be blank") @Size(min = 5, max = 20, message = "Department Description should be between 5 to 20 characters") String description,
-			@NotEmpty(message = "Organization Id is required/Can't be blank") @Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters") String orgId,
-			@NotEmpty(message = "Department status can't be blank") boolean status) {
-		super();
-		this.deptId = deptId;
-		this.deptName = deptName;
-		this.description = description;
-		this.orgId = orgId;
-		this.status = status;
 	}
 
 	public Long getDeptId() {
@@ -93,6 +89,20 @@ public class Department extends AuditModel {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+
+	public List<Employee> getEmps() {
+		return emps;
+	}
+
+	public void setEmps(List<Employee> emps) {
+		this.emps = emps;
+	}
+
+	@Override
+	public String toString() {
+		return "Department [deptId=" + deptId + ", deptName=" + deptName + ", description=" + description + ", orgId="
+				+ orgId + ", status=" + status + ", emps=" + emps + "]";
 	}
 
 }
