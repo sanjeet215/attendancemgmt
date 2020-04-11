@@ -194,7 +194,7 @@ public class EmpServiceImpl {
 			nemp.setEmpType(empRequest.getEmpType());
 			nemp.setEmpStatus(empRequest.isEmpStatus());
 			nemp.setOrgId(empRequest.getOrgId());
-			//nemp.setDept(department.get().get(0));
+			nemp.setDept(department.get().get(0));
 			return empRepo.save(nemp);
 
 		}).orElseThrow(
