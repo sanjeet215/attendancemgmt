@@ -24,5 +24,8 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 	Optional<Department> findByDeptIdAndOrgIdAndStatus(Long deptId, String orgId, boolean status);
 
 	Optional<Long> countByOrgIdAndStatus(String orgId, boolean status);
+	
+	
+	Optional<List<Department>> findByorgId(String orgId);
 
 }

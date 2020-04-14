@@ -46,12 +46,31 @@ public class EmpServiceImpl {
 		}
 	}
 
+	/* Get Employee by Organization */
+	public List<Employee> getEmployeeByOrganization(String orgId) {
+
+		Optional<List<Employee>> empList = empRepo.findByorgId(orgId);
+
+		if (!empList.isPresent()) {
+			throw new ResourceNotFoundException("There are no employees Present for Organization");
+		} else {
+			return empList.get();
+		}
+	}
+
 	/* Add new Employee */
 
 	public Employee addNewEmployee(Employee emp) {
 
-		if (!orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
-			throw new ResourceNotFoundException("Organization doesn't exist "+ emp.getOrgId());
+		logger.info("Orgnization id is " + emp.getOrgId());
+		// if (!orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
+		// throw new ResourceNotFoundException("Organization doesn't exist " +
+		// emp.getOrgId());
+		// }
+		Optional<Organization> org = orgRepo.findByorganizationDisplayName(emp.getOrgId());
+
+		if (!org.isPresent()) {
+			throw new ResourceNotFoundException("Organization doesn't exist " + emp.getOrgId());
 		}
 
 		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(emp.getPhoneNo());
@@ -163,8 +182,9 @@ public class EmpServiceImpl {
 		}
 
 		/* Get Department from Department name */
-		
-		Optional<List<Department>> department = deptRepo.findBydeptNameAndOrgId(empRequest.getDept(),empRequest.getOrgId());
+
+		Optional<List<Department>> department = deptRepo.findBydeptNameAndOrgId(empRequest.getDept(),
+				empRequest.getOrgId());
 
 		if (!department.isPresent()) {
 			throw new ResourceNotFoundException("Department doesn't exist with Deptname: " + empRequest.getDept());

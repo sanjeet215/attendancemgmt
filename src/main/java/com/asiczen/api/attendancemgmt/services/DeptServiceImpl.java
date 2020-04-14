@@ -49,6 +49,21 @@ public class DeptServiceImpl {
 		}
 	}
 	
+	//Get Departments BY Organization
+	
+	public List<Department> getDepartmentsByOrganization(String orgId){
+	
+		Optional<List<Department>> deptList = deptRepo.findByorgId(orgId);
+		
+		if(!deptList.isPresent()) {
+			throw new ResourceNotFoundException("There are no department registered for org id.");
+		} else {
+			return deptList.get();
+		}
+	}
+	
+	
+	
 	//Update Department
 	public Department updateDepartment(Department newDept) {
 		Optional<Department> department = deptRepo.findById(newDept.getDeptId());

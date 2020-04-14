@@ -48,14 +48,7 @@ public class LeaveTypesController {
 																"Organization Created Successfully",
 																leaveTypeService.postLeaves(leaveTypes)));
 	}
-	
-//	@GetMapping("/leavetype")
-//	public ResponseEntity<ApiResponse> getAllLeaveTypes(){
-//		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-//														 "LeaveTypes Extracted Successfully",
-//														 leaveTypeService.getAllLeavetypes()));
-//	}
-	
+		
 	//Leave Types based on orgID. This is for drop down.
 	
 	@GetMapping("/leavetype")
@@ -74,14 +67,8 @@ public class LeaveTypesController {
 											  @RequestParam String orgId) {
 		
 		String fileName = fileStorageService.storeFile(file);
-		
-		logger.debug("File with file name "+ fileName+ " uploaded successflly");
-		
 		readUpload.readLeaveTypeExcel(fileName, orgId);
-		
-		
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/").path(fileName).toUriString();
-		
 		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 	

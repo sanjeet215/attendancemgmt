@@ -72,10 +72,17 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Organization Created Successfully", empService.getAllEmployees()));
 	}
+	
+	@GetMapping("/empbyorg")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getEmployeesByOrg(@Valid @RequestParam String orgId) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Organization Created Successfully", empService.getEmployeeByOrganization(orgId)));
+	}
 
 	/* Update Employee */
 	@PutMapping("/emp")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> updateEmployee(@Valid @RequestBody EmployeeRequest emp) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee updated Successfully", empService.updateEmployee(emp)));
@@ -84,14 +91,14 @@ public class EmployeeController {
 
 	/* Get Employee By Id */
 	@GetMapping("/emp/{id}")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> retrieveEmp(@Valid @PathVariable long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee with id: " + id + " retrieved successfully", empService.getEmployeeById(id)));
 	}
 
 	@GetMapping("/emp/profile")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> retrieveEmpbyEmail(@Valid @RequestParam String emailid) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee with id: " + emailid + " retrieved successfully", empService.findByEmailid(emailid)));
@@ -99,7 +106,7 @@ public class EmployeeController {
 
 	/* Active Users */
 	@GetMapping("/emp/count")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> countEmpByOrganization(@Valid @RequestParam String orgid) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
@@ -108,9 +115,8 @@ public class EmployeeController {
 
 	/* Returns count of both Emplyees and Departments by Organization */
 	@GetMapping("/count")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> countByOrganization(@Valid @RequestParam String orgid) {
-		logger.debug("Incoming Organization id: " + orgid);
 
 		List<EmpDeptCountResponse> count = new ArrayList<EmpDeptCountResponse>();
 
@@ -177,7 +183,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/emp/upload")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> uploadLogo(@Valid @RequestParam("orgId") String orgId,
 			@Valid @RequestParam("empId") String empId, @Valid @RequestParam("file") MultipartFile file) {
 
@@ -192,6 +198,7 @@ public class EmployeeController {
 	/* Data for Employee and Department dropdown */
 
 	@GetMapping("/empdeptlist")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> getEmployeeDepartmentByOrganization(@Valid @RequestParam String orgId) {
 
 		List<String> empidList = empService.getEmpListbyOrg(orgId).getEmpId();

@@ -64,12 +64,18 @@ public class DepartmentController {
 																		 deptService.getAllDepartments()));
 	}
 	
+	@GetMapping("/deptbyOrg")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getDepartmentsbyOrg(@Valid @RequestParam String orgId) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+																		 "Org wise Department Extracted", 
+																		 deptService.getDepartmentsByOrganization(orgId)));
+	}
+	
 	
 	@GetMapping("/dept/count")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> getDepartmentCount(@Valid @RequestParam String orgid){
-		
-		logger.debug("Incoming Organization id: "+orgid);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																		"Department Count extracted",

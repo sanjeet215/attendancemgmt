@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.model.Organization;
+import com.asiczen.api.attendancemgmt.repository.OrganizationRepository;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
+import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -38,6 +42,13 @@ public class TestController {
 
 	@Autowired
 	JwtUtils jwtUtils;
+	
+	@Autowired
+	OrganizationRepository orgRepo;
+	
+	@Autowired
+	EmpServiceImpl employeeService;
+	
 	
 	
 	@GetMapping("/finduser")
@@ -75,4 +86,43 @@ public class TestController {
 	public String adminAccess() {
 		return "Admin Board.";
 	}
+	
+	@GetMapping("/dummyOrg")
+	public String createDummyOrg() {
+		
+		Organization org = new Organization();
+		org.setContactEmailId("dummy@gmail.com");
+		org.setContactPersonName("dummy");
+		org.setOrganizationcontact("9999999999");
+		org.setOrganizationDescription("dummy");
+		org.setOrganizationLocation("India");
+		org.setOrganizationDisplayName("dummy");
+		org.setStatus("active");
+		
+		orgRepo.save(org);
+		
+		return "success";
+		
+		
+		
+	}
+	
+	@GetMapping("/dummyUser")
+	public String createDummyUser() {
+		Employee emp = new Employee();
+		
+		emp.setEmpEmailId("dummy@gmail.com");
+		emp.setEmpFirstName("dummy");
+		emp.setEmpId("dummy");
+		emp.setOrgId("dummy");
+		emp.setPhoneNo("9999999999");
+		emp.setEmpLsatName("LastName");
+		emp.setEmpStatus(true);
+		
+		employeeService.addNewEmployee(emp);
+		
+		return "Employee Created";
+	}
+	
 }
+
