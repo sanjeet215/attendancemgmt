@@ -2,20 +2,21 @@ package com.asiczen.api.attendancemgmt.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "employee")
@@ -44,7 +45,7 @@ public class Employee extends AuditModel {
 
 	@NotEmpty(message = "empEmailId is required/Can't be blank")
 	@Size(min = 5, max = 50, message = "empEmailId should be between 5 to 50 characters")
-	@Column(name = "empEmailId", unique = true, nullable = false ,length = 50)
+	@Column(name = "empEmailId", unique = true, nullable = false, length = 50)
 	@Pattern(regexp = "^(.+)@(.+)$", message = "Email Id is invalid")
 	@Email
 	private String empEmailId;
@@ -87,9 +88,9 @@ public class Employee extends AuditModel {
 
 	@Column(name = "orgid", nullable = false)
 	private String orgId;
-	
+
 	@ManyToOne
-	@JoinColumn(name ="DEPT_ID")
+	@JoinColumn(name = "DEPT_ID")
 	private Department dept;
 
 	public Employee() {
@@ -271,7 +272,5 @@ public class Employee extends AuditModel {
 	public void setDept(Department dept) {
 		this.dept = dept;
 	}
-	
 
-	
 }

@@ -31,5 +31,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	
 	Optional<Employee> findByphoneNo(String phoneNo);
 	
+	Optional<Employee> findByOrgIdAndEmpId(String orgId,String empId);
+	
 }
 

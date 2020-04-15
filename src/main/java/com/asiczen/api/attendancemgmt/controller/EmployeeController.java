@@ -26,12 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.model.EmployeeDetails;
 import com.asiczen.api.attendancemgmt.payload.request.EmployeeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.EmpDeptCountResponse;
 import com.asiczen.api.attendancemgmt.payload.response.EmployeeDepartmentResponse;
 import com.asiczen.api.attendancemgmt.services.DeptServiceImpl;
 import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
+import com.asiczen.api.attendancemgmt.services.EmployeeDetailsServiceImpl;
 import com.asiczen.api.attendancemgmt.services.OrganizationServiceImpl;
 import com.asiczen.api.attendancemgmt.utils.ImageFileStorageService;
 
@@ -50,6 +52,9 @@ public class EmployeeController {
 
 	@Autowired
 	OrganizationServiceImpl orgService;
+
+	@Autowired
+	EmployeeDetailsServiceImpl empDetailsService;
 
 	@Autowired
 	ImageFileStorageService storageService;
@@ -72,7 +77,7 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Organization Created Successfully", empService.getAllEmployees()));
 	}
-	
+
 	@GetMapping("/empbyorg")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> getEmployeesByOrg(@Valid @RequestParam String orgId) {
@@ -218,4 +223,35 @@ public class EmployeeController {
 				new ApiResponse(HttpStatus.OK.value(), "Employee Id and Deptnames extracted successfully", response));
 	}
 
+	
+	/* Employee Salary Details Section */
+	
+	/* Update employee salary details. */
+	@PostMapping("/empdetails")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> postEmployeeSalaryDetails(@Valid @RequestBody EmployeeDetails empDetails) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Employee salary details updated successfully", empDetailsService.postEmployeeDetails(empDetails)));
+
+	}
+
+	// All Employee of Organizations
+	@GetMapping("/empdetailsbyorg")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
+	public ResponseEntity<ApiResponse> getEmployeeSalaryDetailsforOrg(@Valid @RequestParam String orgId) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Employee salary details extracted successfully", empDetailsService.getAllEmployeeDetails(orgId)));
+	}
+
+	// Get employee specific Details
+
+	@GetMapping("/empdetails")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
+	public ResponseEntity<ApiResponse> getEmployeeSalaryDetails(@Valid @RequestParam String orgId,@Valid @RequestParam String empId) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Employee salary details extracted successfully", empDetailsService.getEmployeeDetails(orgId, empId)));
+	}
 }
