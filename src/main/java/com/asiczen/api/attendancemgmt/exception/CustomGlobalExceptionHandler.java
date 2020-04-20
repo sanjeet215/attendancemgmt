@@ -83,7 +83,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         errors.setTimestamp(LocalDateTime.now());
         errors.setError(ex.getLocalizedMessage());
         errors.setStatus(HttpStatus.CONFLICT.value());
-        errors.setMessage(ex.getCause().toString());
+        errors.setMessage(ex.getLocalizedMessage());
 
         return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 

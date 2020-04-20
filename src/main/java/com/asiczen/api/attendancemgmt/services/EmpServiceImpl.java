@@ -71,13 +71,13 @@ public class EmpServiceImpl {
 		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(emp.getPhoneNo());
 
 		if (findEmpByNumber.isPresent()) {
-			throw new ResourceAlreadyExistException("Phone no is already in Use!");
+			throw new ResourceAlreadyExistException("Phone No is already in taken!");
 		}
 
-		Optional<Employee> findEmpbyEmpid = empRepo.findByempId("Emp id is already in use");
+		Optional<Employee> findEmpbyEmpid = empRepo.findByempId(emp.getEmpId());
 
 		if (findEmpbyEmpid.isPresent()) {
-			throw new ResourceAlreadyExistException("Employee Id is already in Use!");
+			throw new ResourceAlreadyExistException("Employee Id is already in taken!");
 		}
 
 		return empRepo.save(emp);

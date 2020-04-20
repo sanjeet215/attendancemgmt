@@ -41,7 +41,6 @@ public class ReadExcelFile {
 
 		
 		logger.debug("File path :"+ filePath);
-		System.out.println("File path :"+ filePath);
 		
 		List<String> fileData = new ArrayList<String>();
 		String readRow = null;
@@ -60,15 +59,12 @@ public class ReadExcelFile {
 					Cell cell = cellIterator.next();
 					switch (cell.getCellType()) {
 					case Cell.CELL_TYPE_STRING:
-						//sb.append(cell.getStringCellValue() + ";");
 						readRow=readRow+cell.getStringCellValue() + ";";
 						break;
 					case Cell.CELL_TYPE_NUMERIC:
-						//sb.append(cell.getNumericCellValue() + ";");
 						readRow=readRow+cell.getNumericCellValue() + ";";
 						break;
 					case Cell.CELL_TYPE_BOOLEAN:
-						//sb.append(cell.getBooleanCellValue() + ";");
 						readRow=readRow+cell.getBooleanCellValue()+";";
 						break;
 					default:
@@ -100,8 +96,6 @@ public class ReadExcelFile {
 	
 	@Transactional
 	public void uploadLeaveData(List<String> fileContent,String orgId){
-		
-		//leaveService.deleteByOrganization(orgId);
 		
 		fileContent.remove(0);
 		
