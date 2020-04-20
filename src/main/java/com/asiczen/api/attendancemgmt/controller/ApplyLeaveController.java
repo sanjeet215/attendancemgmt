@@ -47,7 +47,7 @@ public class ApplyLeaveController {
 												 @Valid @RequestParam String empId,
 												 @Valid @RequestParam String status) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Leaves data extracted successfully", applyLeaveService.getLeaveswithStatus(orgid, empId, status)));
+				"Leave data extracted successfully", applyLeaveService.getLeaveswithStatus(orgid, empId, status)));
 	}
 	
 	
@@ -57,7 +57,7 @@ public class ApplyLeaveController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> updateLeaves(@Valid @RequestBody AppliedLeaves leaves) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Leaves data extracted successfully", applyLeaveService.updatestatus(leaves)));
+				"Leave data extracted successfully", applyLeaveService.updatestatus(leaves)));
 	}
 	
 

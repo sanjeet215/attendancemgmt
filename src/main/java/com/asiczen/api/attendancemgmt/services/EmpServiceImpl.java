@@ -172,8 +172,11 @@ public class EmpServiceImpl {
 
 		Optional<Employee> findEmpByNumber = empRepo.findByphoneNo(empRequest.getPhoneNo());
 
-		if (findEmpByNumber.isPresent() && !empRequest.getEmpId().equals(empRequest.getEmpId())) {
-			throw new ResourceAlreadyExistException("Phone no is already in Use!");
+		if (findEmpByNumber.isPresent()) {
+			if (!findEmpByNumber.get().getEmpEmailId().equalsIgnoreCase(empRequest.getEmpEmailId())) {
+				throw new ResourceAlreadyExistException("Phone no is already in Use!");
+			}
+
 		}
 
 		/* Get Department from Department name */

@@ -45,17 +45,14 @@ public class ApplyServiceImpl {
 
 		int quantity = 0;
 
-		// Leave quantity calculation
+		/* Quantity calculation starts */
 
-		for (LocalDate date = appliedLeave.getFromDate(); date
-				.isBefore(appliedLeave.getToDate()); date = date.plusDays(1)) {
-
-			System.out.println("Looping" + date.getDayOfWeek());
+		for (LocalDate date = appliedLeave.getFromDate(); date.isBefore(appliedLeave.getToDate()); date = date.plusDays(1)) {
 
 			if (date.getDayOfWeek() == DayOfWeek.SATURDAY) {
-				
+
 			} else if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-				
+
 			} else {
 				quantity = quantity + 1;
 			}
@@ -75,6 +72,9 @@ public class ApplyServiceImpl {
 
 		appliedLeave.setQuantity(quantity);
 
+		/* Quantity calculation ends */
+		
+		
 		List<String> emailList = new ArrayList<String>();
 
 		Optional<List<User>> moderators = userRepo.findByorgId(appliedLeave.getOrgId());
@@ -83,7 +83,7 @@ public class ApplyServiceImpl {
 		}
 
 		emailList.forEach(item -> {
-			mailService.emailData("asizzent.com", item, "new leave is applied for your approval", "Leave Request");
+			mailService.emailData("asiczen.com", item, "new leave is applied for your approval", "Leave Request");
 		});
 
 		return appliedLeavesRepo.save(appliedLeave);
