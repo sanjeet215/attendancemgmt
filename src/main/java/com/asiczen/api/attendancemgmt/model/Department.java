@@ -27,12 +27,12 @@ public class Department extends AuditModel {
 	private Long deptId;
 
 	@NotEmpty(message = "Department Name is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "deptName should be between 5 to 10 characters")
+	@Size(min = 2, max = 32, message = "deptName should be between 5 to 10 characters")
 	@Column(name = "deptName")
 	private String deptName;
 
 	@NotEmpty(message = "Department Description is required/Can't be blank")
-	@Size(min = 5, max = 20, message = "Department Description should be between 5 to 20 characters")
+	@Size(min = 5, max = 100, message = "Department Description should be between 5 to 20 characters")
 	@Column(name = "description")
 	private String description;
 

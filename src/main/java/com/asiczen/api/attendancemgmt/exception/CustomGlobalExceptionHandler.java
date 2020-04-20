@@ -81,9 +81,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());
-        errors.setError(ex.getMessage());
+        errors.setError(ex.getLocalizedMessage());
         errors.setStatus(HttpStatus.CONFLICT.value());
-        errors.setMessage("Duplicate data can't be created");
+        errors.setMessage(ex.getCause().toString());
 
         return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 

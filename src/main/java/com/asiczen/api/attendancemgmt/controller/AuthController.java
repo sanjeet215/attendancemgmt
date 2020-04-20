@@ -1,6 +1,5 @@
 package com.asiczen.api.attendancemgmt.controller;
 
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,31 +34,30 @@ import com.asiczen.api.attendancemgmt.model.Role;
 import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.request.LoginRequest;
 import com.asiczen.api.attendancemgmt.payload.request.SignupRequest;
+import com.asiczen.api.attendancemgmt.payload.request.UserRoleChangeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.JwtResponse;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
+import com.asiczen.api.attendancemgmt.services.AuthService;
 import com.asiczen.api.attendancemgmt.services.EmailServiceImpl;
 import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
 import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
-
-
-
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	
-	private static final Logger logger= LoggerFactory.getLogger(AuthController.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 	@Value("${asiczen.from.email}")
 	private String mailFrom;
-	
+
 	@Value("${asiczen.from.userregn}")
 	private String mailcontent;
-	
+
 	@Autowired
 	AuthenticationManager authenticationManager;
 
@@ -73,13 +72,15 @@ public class AuthController {
 
 	@Autowired
 	JwtUtils jwtUtils;
-	
+
 	@Autowired
 	EmailServiceImpl emailService;
 
 	@Autowired
 	EmpServiceImpl employeeService;
-	
+
+	@Autowired
+	AuthService authService;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -89,42 +90,35 @@ public class AuthController {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
-		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();		
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
+
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-		
-		logger.debug("Ching for Orgnization id : "+userDetails.toString());
-		System.out.println("Printing value");
-		logger.info("Ching for Orgnization id : "+userDetails.toString());
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-																		 "User validate Successfully",
-																		 new JwtResponse(jwt, 
-																				 userDetails.getId(), 
-																				 userDetails.getUsername(), 
-																				 userDetails.getEmail(), 
-																				 roles,
-																				 userDetails.getOrgId())));	
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ApiResponse(HttpStatus.OK.value(), "User validate Successfully",
+						new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(),
+								roles, userDetails.getOrgId())));
 	}
 
 	@PostMapping("/signup")
-	//@PreAuthorize("hasRole('ADMIN')")
+	// @PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+		
+		if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
 			throw new ResourceAlreadyExistException("Error: UserId is already in taken!");
 		}
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+		if (Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequest.getEmail()))) {
 			throw new ResourceAlreadyExistException("Error: Email is already in use!");
 		}
+		
+		employeeService.validateEmp(signUpRequest.getPhoneNo(), signUpRequest.getEmpId(),signUpRequest.getOrgId());
+		
 
 		// Create new user's account
-		User user = new User(signUpRequest.getUsername(), 
-							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()),
-							 signUpRequest.getOrgId());
+		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+				encoder.encode(signUpRequest.getPassword()), signUpRequest.getOrgId());
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();
@@ -157,14 +151,15 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
-		String credentials = "User Name: "+user.getUsername()+ "\nPassword: "+signUpRequest.getPassword();
-		
-		emailService.emailData(mailFrom,user.getEmail(), mailcontent+credentials, "User registered successfully!");
+		String credentials = "User Name: " + user.getUsername() + "\nPassword: " + signUpRequest.getPassword();
 
-		/* Section is to populate employee Details with minimum data
-		 * */
+		emailService.emailData(mailFrom, user.getEmail(), mailcontent + credentials, "User registered successfully!");
+
+		/*
+		 * Section is to populate employee Details with minimum data
+		 */
 		Employee emp = new Employee();
-		
+
 		emp.setEmpEmailId(signUpRequest.getEmail());
 		emp.setEmpFirstName(signUpRequest.getUsername());
 		emp.setEmpId(signUpRequest.getEmpId());
@@ -173,22 +168,31 @@ public class AuthController {
 		emp.setEmpLsatName("LastName");
 		emp.setEmpStatus(true);
 		employeeService.addNewEmployee(emp);
-		
-		
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
-															  				  "User registered successfully!",
-															  				  userRepository.save(user)));
+				"User registered successfully!", userRepository.save(user)));
 	}
-	
-	
+
 	@GetMapping("/user")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> getAllUser(){
+	public ResponseEntity<?> getAllUser() {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-																		 "All users are extracted successfully",
-																		 userRepository.findAll()));
+				"All users are extracted successfully", userRepository.findAll()));
 	}
-	
-}
 
+	@PutMapping("/user")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> updateUser(@Valid @RequestBody UserRoleChangeRequest request) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"User role updated successfully", authService.updatedUser(request)));
+	}
+
+	@GetMapping("/userbyorg")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> getusersByOrganization(String orgId) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Users extracted for organization", userRepository.findByorgId(orgId)));
+
+	}
+
+}

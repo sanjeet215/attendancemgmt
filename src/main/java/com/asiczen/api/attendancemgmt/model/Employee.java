@@ -34,12 +34,12 @@ public class Employee extends AuditModel {
 	private String empId;
 
 	@NotEmpty(message = "empfname is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "empfname should be between 5 to 10 characters")
+	@Size(min = 2, max = 10, message = "empfname should be between 5 to 10 characters")
 	@Column(name = "empfname", unique = false, nullable = false)
 	private String empFirstName;
 
 	@NotEmpty(message = "emplname is required/Can't be blank")
-	@Size(min = 5, max = 10, message = "emplname should be between 5 to 10 characters")
+	@Size(min = 1, max = 10, message = "emplname should be between 5 to 10 characters")
 	@Column(name = "emplname")
 	private String empLsatName;
 

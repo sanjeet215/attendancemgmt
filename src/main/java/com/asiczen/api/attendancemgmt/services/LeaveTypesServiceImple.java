@@ -21,6 +21,9 @@ public class LeaveTypesServiceImple {
 	@Autowired
 	LeaveTypesReposiory leaveTypeRepo;
 
+	/* 1. check if leaves are already applied */
+	/* Duplicate Check*/
+	/* Status Check */
 	
 	public LeaveTypes postLeaves(LeaveTypes leavetype) {
 		

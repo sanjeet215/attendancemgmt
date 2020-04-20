@@ -17,6 +17,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	
 	Boolean existsByphoneNo(String phoneNo);
 	
+	Boolean existsByempId(String empId);
+	
 	Optional<List<Employee>> findByOrgIdAndEmpStatus(String orgId,String status);
 	
 	Optional<Long> countByOrgIdAndEmpStatus(String orgId,boolean status);

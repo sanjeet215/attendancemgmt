@@ -62,11 +62,6 @@ public class EmpServiceImpl {
 
 	public Employee addNewEmployee(Employee emp) {
 
-		logger.info("Orgnization id is " + emp.getOrgId());
-		// if (!orgRepo.existsByorganizationDisplayName(emp.getOrgId())) {
-		// throw new ResourceNotFoundException("Organization doesn't exist " +
-		// emp.getOrgId());
-		// }
 		Optional<Organization> org = orgRepo.findByorganizationDisplayName(emp.getOrgId());
 
 		if (!org.isPresent()) {
@@ -302,5 +297,27 @@ public class EmpServiceImpl {
 
 		return response;
 	}
+	
+	/* Emp Check by phone number and empid */
+	public void validateEmp(String phoneNo,String empId,String orgId) {
+		
+		if(Boolean.TRUE.equals(empRepo.existsByphoneNo(phoneNo))) {
+			throw new ResourceAlreadyExistException("Mobile number is already taken");
+		}
+		
+		if(Boolean.TRUE.equals(empRepo.existsByempId(empId))) {
+			throw new ResourceAlreadyExistException("Employee Id is already taken");
+		}
+		
+		Optional<Employee> emp = empRepo.findByOrgIdAndEmpId(empId, orgId);
+		
+		if(emp.isPresent()) {
+			throw new ResourceAlreadyExistException("Employee Id is already taken");
+		}
+		
+		
+	}
 
 }
+
+
