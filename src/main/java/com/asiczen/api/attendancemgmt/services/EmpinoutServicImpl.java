@@ -39,10 +39,15 @@ public class EmpinoutServicImpl {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
 		String dateTime = request.getSwipeDate()+" "+request.getSwipeTime();
 		
+		System.out.println("Received date and time is"+ dateTime);
+		
 		Date date;
 		
 		try {
 			date = formatter.parse(dateTime);
+			
+			System.out.println("Converted date and time is "+ date);
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new DateFormatException(e.getLocalizedMessage());
