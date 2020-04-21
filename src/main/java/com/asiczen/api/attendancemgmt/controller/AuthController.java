@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
@@ -189,7 +190,7 @@ public class AuthController {
 
 	@GetMapping("/userbyorg")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-	public ResponseEntity<ApiResponse> getusersByOrganization(String orgId) {
+	public ResponseEntity<ApiResponse> getusersByOrganization(@Valid @RequestParam String orgId) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Users extracted for organization", userRepository.findByorgId(orgId)));
 
