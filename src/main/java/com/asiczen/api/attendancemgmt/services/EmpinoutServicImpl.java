@@ -36,7 +36,7 @@ public class EmpinoutServicImpl {
 	
 	public Empinout postEmpLoginDetails(EmployeeSwipeRequest request) {
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.ENGLISH);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
 		String dateTime = request.getSwipeDate()+" "+request.getSwipeTime();
 		
 		Date date;

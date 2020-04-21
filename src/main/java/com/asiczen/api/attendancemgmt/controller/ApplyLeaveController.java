@@ -34,7 +34,7 @@ public class ApplyLeaveController {
 	/* Employee or Moderator applies Leave */
 
 	@PostMapping("/applyleave")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> postLeaves(@Valid @RequestBody AppliedLeaves leaves) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 				"Leaves posted Successfully", applyLeaveService.postLeaves(leaves)));

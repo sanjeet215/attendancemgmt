@@ -29,18 +29,16 @@ public class EmployeeDetailsServiceImpl {
 	/* Post Employee Details */
 	public EmployeeDetails postEmployeeDetails(EmployeeDetails employeeDetails) {
 
-		Optional<Employee> employee = empRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),
-				employeeDetails.getEmpId());
+		Optional<Employee> employee = empRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),employeeDetails.getEmpId());
 
 		if (!employee.isPresent()) {
-			throw new ResourceNotFoundException("Employee not Found with empId and OrgID ");
+			throw new ResourceNotFoundException("Employee not Found with empId and OrgID "+employeeDetails.getOrgId()+"_"+employeeDetails.getEmpId());
 		}
 
-		Optional<EmployeeDetails> empDetails = empDetailsRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),
-				employeeDetails.getEmpId());
+		Optional<EmployeeDetails> empDetails = empDetailsRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),employeeDetails.getEmpId());
 
 		if (empDetails.isPresent()) {
-			throw new ResourceAlreadyExistException("REcord with Empid and OrgID already present.Please try to update");
+			throw new ResourceAlreadyExistException("Record with Empid and OrgID already present.Please try to update");
 		}
 
 		return empDetailsRepo.save(employeeDetails);
