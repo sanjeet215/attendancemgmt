@@ -35,11 +35,9 @@ public class SalaryController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> postEmpSalary(@Valid @RequestBody SalaryComponent component){
 		
-		//service.postEmployeeSalary(component);
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
 																			  "Components created Successfully",
-																			  service.postEmployeeSalary(component)));
+																			  service.updateEmployeeSalary(component)));
 	}
 	
 	

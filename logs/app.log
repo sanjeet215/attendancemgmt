@@ -1,0 +1,17 @@
+2020-04-22 10:13:13,332 DEBUG org.springframework.web.context.ContextLoader [restartedMain] Published root WebApplicationContext as ServletContext attribute with name [org.springframework.web.context.WebApplicationContext.ROOT]
+2020-04-22 10:13:13,333 INFO org.springframework.web.context.ContextLoader [restartedMain] Root WebApplicationContext: initialization completed in 625 ms
+2020-04-22 10:13:14,394 DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping [restartedMain] 70 mappings in 'requestMappingHandlerMapping'
+2020-04-22 10:13:14,504 DEBUG org.springframework.web.servlet.handler.SimpleUrlHandlerMapping [restartedMain] Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2020-04-22 10:13:14,608 DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter [restartedMain] ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2020-04-22 10:13:14,619 DEBUG org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver [restartedMain] ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2020-04-22 10:13:23,797 INFO com.asiczen.api.attendancemgmt.AttendancemgmtApplication [restartedMain] Starting AttendancemgmtApplication on LAPTOP-ET63CILL with PID 26004 (C:\publishtoProd\attendancemgmt\target\classes started by sanjeet in C:\publishtoProd\attendancemgmt)
+2020-04-22 10:13:23,798 DEBUG com.asiczen.api.attendancemgmt.AttendancemgmtApplication [restartedMain] Running with Spring Boot v2.2.5.RELEASE, Spring v5.2.4.RELEASE
+2020-04-22 10:13:23,798 INFO com.asiczen.api.attendancemgmt.AttendancemgmtApplication [restartedMain] The following profiles are active: dev
+2020-04-22 10:13:24,391 DEBUG org.springframework.web.context.ContextLoader [restartedMain] Published root WebApplicationContext as ServletContext attribute with name [org.springframework.web.context.WebApplicationContext.ROOT]
+2020-04-22 10:13:24,391 INFO org.springframework.web.context.ContextLoader [restartedMain] Root WebApplicationContext: initialization completed in 591 ms
+2020-04-22 10:13:24,907 DEBUG com.asiczen.api.attendancemgmt.security.jwt.AuthTokenFilter [restartedMain] Filter 'authenticationJwtTokenFilter' configured for use
+2020-04-22 10:13:25,332 DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping [restartedMain] 70 mappings in 'requestMappingHandlerMapping'
+2020-04-22 10:13:25,388 DEBUG org.springframework.web.servlet.handler.SimpleUrlHandlerMapping [restartedMain] Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2020-04-22 10:13:25,465 DEBUG org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter [restartedMain] ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2020-04-22 10:13:25,476 DEBUG org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver [restartedMain] ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2020-04-22 10:13:25,563 INFO com.asiczen.api.attendancemgmt.AttendancemgmtApplication [restartedMain] Started AttendancemgmtApplication in 1.791 seconds (JVM running for 315.576)

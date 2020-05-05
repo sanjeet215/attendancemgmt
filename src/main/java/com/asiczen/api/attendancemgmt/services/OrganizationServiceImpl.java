@@ -29,14 +29,14 @@ public class OrganizationServiceImpl {
 		Optional<Organization> organization = orgRepo.findByorganizationDisplayName(org.getOrganizationDisplayName());
 
 		if (organization.isPresent()) {
-			logger.error("Organization Id" + org.getOrganizationDisplayName() + "already exist in Database");
+			logger.error("Organization Id " + org.getOrganizationDisplayName() + " is already taken.Please try a different one.");
 			throw new ResourceAlreadyExistException(org.getOrganizationDisplayName());
 		}
 		
 		Optional<Organization> orgByContactEmailId = orgRepo.findBycontactEmailId(org.getContactEmailId());
 		
 		if (orgByContactEmailId.isPresent()) {
-			logger.error("Organization ContactEmailId" + org.getContactEmailId() + "already exist in Database");
+			logger.error(org.getContactEmailId() + " is already taken.Please try a different one.");
 			throw new ResourceAlreadyExistException(org.getContactEmailId());
 		}
 		
@@ -44,7 +44,7 @@ public class OrganizationServiceImpl {
 
 		if(orgByorganizationcontact.isPresent()) {
 			logger.error("Phone Number must be Unique" + org.getOrganizationcontact());
-			throw new ResourceAlreadyExistException(org.getOrganizationcontact());
+			throw new ResourceAlreadyExistException(org.getOrganizationcontact()+" is already taken.Please try a different one.");
 		}
 		
 		return orgRepo.save(org);
@@ -79,7 +79,7 @@ public class OrganizationServiceImpl {
 			
 			return orgRepo.save(company);
 
-		}).orElseThrow(() -> new ResourceNotFoundException("Orgnization Id : "+ newCompany.getId() + "not found"));
+		}).orElseThrow(() -> new ResourceNotFoundException("Orgnization Id : "+ newCompany.getId() + " is not found"));
 
 	}
 	
@@ -88,7 +88,7 @@ public class OrganizationServiceImpl {
 		Optional<Organization> org = orgRepo.findByorganizationDisplayNameAndStatus(orgId, "true");
 
 		if (!org.isPresent()) {
-			throw new ResourceNotFoundException("Organization with OrgId: "+orgId+" not registered yet");
+			throw new ResourceNotFoundException("Organization with OrgId: "+orgId+" is not registered yet");
 		} else {
 			return true;
 		}

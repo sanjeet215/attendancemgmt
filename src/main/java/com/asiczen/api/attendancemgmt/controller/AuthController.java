@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
+import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.ERole;
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.Role;
@@ -38,6 +40,7 @@ import com.asiczen.api.attendancemgmt.payload.request.SignupRequest;
 import com.asiczen.api.attendancemgmt.payload.request.UserRoleChangeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.payload.response.JwtResponse;
+import com.asiczen.api.attendancemgmt.payload.response.UserByOrganizationResponse;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
@@ -105,7 +108,7 @@ public class AuthController {
 	@PostMapping("/signup")
 	// @PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		
+
 		if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
 			throw new ResourceAlreadyExistException("Error: UserId is already in taken!");
 		}
@@ -113,9 +116,8 @@ public class AuthController {
 		if (Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequest.getEmail()))) {
 			throw new ResourceAlreadyExistException("Error: Email is already in use!");
 		}
-		
-		employeeService.validateEmp(signUpRequest.getPhoneNo(), signUpRequest.getEmpId(),signUpRequest.getOrgId());
-		
+
+		employeeService.validateEmp(signUpRequest.getPhoneNo(), signUpRequest.getEmpId(), signUpRequest.getOrgId());
 
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
@@ -191,8 +193,26 @@ public class AuthController {
 	@GetMapping("/userbyorg")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> getusersByOrganization(@Valid @RequestParam String orgId) {
+
+		List<UserByOrganizationResponse> responseList = new ArrayList<>();
+		List<User> userList = userRepository.findByorgId(orgId)
+				.orElseThrow(() -> new ResourceNotFoundException("No employees registered for the organization "));
+
+		userList.forEach(item -> {
+			UserByOrganizationResponse response = new UserByOrganizationResponse();
+
+			response.setId(item.getId());
+			response.setEmail(item.getEmail());
+			response.setUsername(item.getUsername());
+			response.setRoles(item.getRoles());
+			response.setOrgId(item.getOrgId());
+			response.setEmail(employeeService.findByEmailid(item.getEmail()).getEmpId());
+
+			responseList.add(response);
+		});
+
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Users extracted for organization", userRepository.findByorgId(orgId)));
+				"Users extracted for organization", responseList));
 
 	}
 

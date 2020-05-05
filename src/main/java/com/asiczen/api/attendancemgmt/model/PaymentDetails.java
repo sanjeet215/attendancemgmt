@@ -36,8 +36,8 @@ public class PaymentDetails extends AuditModel{
 	@Column(name = "componentName", nullable = false)
 	private String componentName;
 	
-	@DecimalMin(value = "1.1", inclusive = false)
-	@DecimalMax(value = "1000000", inclusive = false)
+	@DecimalMin(value = "0.0", inclusive = false, message="quanity can't be negative")
+	@DecimalMax(value = "10000000000", inclusive = false)
 	private Double quantity;
 
 	public PaymentDetails() {

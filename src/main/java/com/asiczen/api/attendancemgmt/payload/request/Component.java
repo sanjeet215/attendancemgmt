@@ -11,8 +11,8 @@ public class Component {
 	@Size(min = 5, max = 100, message = "componentName should be between 5 to 30 characters")
 	private String component;
 	
-	@DecimalMin(value = "1.1", inclusive = false)
-	@DecimalMax(value = "1000000", inclusive = false)
+	@DecimalMin(value = "0.0", inclusive = false)
+	@DecimalMax(value = "100000000", inclusive = false)
 	private Double amount;
 
 	public Component() {

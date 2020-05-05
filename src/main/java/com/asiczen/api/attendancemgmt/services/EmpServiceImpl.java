@@ -300,27 +300,39 @@ public class EmpServiceImpl {
 
 		return response;
 	}
-	
+
 	/* Emp Check by phone number and empid */
-	public void validateEmp(String phoneNo,String empId,String orgId) {
-		
-		if(Boolean.TRUE.equals(empRepo.existsByphoneNo(phoneNo))) {
+	public void validateEmp(String phoneNo, String empId, String orgId) {
+
+		if (Boolean.TRUE.equals(empRepo.existsByphoneNo(phoneNo))) {
 			throw new ResourceAlreadyExistException("Mobile number is already taken");
 		}
-		
-		if(Boolean.TRUE.equals(empRepo.existsByempId(empId))) {
+
+		if (Boolean.TRUE.equals(empRepo.existsByempId(empId))) {
 			throw new ResourceAlreadyExistException("Employee Id is already taken");
 		}
-		
+
 		Optional<Employee> emp = empRepo.findByOrgIdAndEmpId(empId, orgId);
-		
-		if(emp.isPresent()) {
+
+		if (emp.isPresent()) {
 			throw new ResourceAlreadyExistException("Employee Id is already taken");
 		}
-		
-		
+
+	}
+
+	/* update image url in database */
+
+	public void updateImageUrl(String orgid, String empid, String fileName) {
+
+		// Check if employee exists
+		// if there get the employee
+		// set the field and push to db
+		Employee emp = empRepo.findByOrgIdAndEmpId(orgid, empid)
+				.orElseThrow(() -> new ResourceNotFoundException("employee not found with empid" + empid));
+		emp.setImageUrl(fileName);
+
+		empRepo.save(emp);
+
 	}
 
 }
-
-

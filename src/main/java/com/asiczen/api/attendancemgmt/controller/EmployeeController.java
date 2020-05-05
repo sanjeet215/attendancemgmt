@@ -193,11 +193,11 @@ public class EmployeeController {
 			@Valid @RequestParam("empId") String empId, @Valid @RequestParam("file") MultipartFile file) {
 
 		Path fileStorageLocation = Paths.get(fileBasePath);
-		storageService.storeFile(file, orgId, fileStorageLocation);
+		String fileName = storageService.storeFile(file, orgId + "." + empId, fileStorageLocation);
+		empService.updateImageUrl(orgId, empId, fileName);
 
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ApiResponse(HttpStatus.OK.value(), "image uploaded successfully",
-						storageService.storeFile(file, orgId + "." + empId, fileStorageLocation)));
+				.body(new ApiResponse(HttpStatus.OK.value(), "image uploaded successfully", fileName));
 	}
 
 	/* Data for Employee and Department dropdown */
@@ -223,9 +223,8 @@ public class EmployeeController {
 				new ApiResponse(HttpStatus.OK.value(), "Employee Id and Deptnames extracted successfully", response));
 	}
 
-	
 	/* Employee Salary Details Section */
-	
+
 	/* Update employee salary details. */
 	@PostMapping("/empdetails")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
@@ -249,7 +248,8 @@ public class EmployeeController {
 
 	@GetMapping("/empdetails")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
-	public ResponseEntity<ApiResponse> getEmployeeSalaryDetails(@Valid @RequestParam String orgId,@Valid @RequestParam String empId) {
+	public ResponseEntity<ApiResponse> getEmployeeSalaryDetails(@Valid @RequestParam String orgId,
+			@Valid @RequestParam String empId) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee salary details extracted successfully", empDetailsService.getEmployeeDetails(orgId, empId)));
