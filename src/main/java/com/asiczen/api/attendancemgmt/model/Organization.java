@@ -25,6 +25,7 @@ public class Organization extends AuditModel {
 	@Size(min = 5, max = 10, message = "organizationDisplayName should be between 5 to 10 characters")
 	@NotEmpty(message = "organizationDisplayName is required/Can't be blank")
 	@Column(name = "organizationDisplayName",unique=true)
+	@Pattern(regexp = "^[\\S]*$")
 	private String organizationDisplayName;
 
 	@Size(min = 5, max = 50, message = "organizationDescription should be between 5 to 50 characters")

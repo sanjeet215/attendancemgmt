@@ -8,10 +8,11 @@ import javax.validation.constraints.*;
 public class SignupRequest {
 	@NotBlank
 	@Size(min = 3, max = 20, message = "username should be between 3 to 20 characters")
+	@Pattern(regexp = "^[\\S]*$")
 	private String username;
 
 	@NotBlank
-	@Size(max = 50, message = "Email id length must be less than 50")
+	@Size(min = 3, max = 50, message = "Email id length must be between 3 to 50 characters")
 	@Email
 	private String email;
 

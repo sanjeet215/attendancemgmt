@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
+import com.asiczen.api.attendancemgmt.exception.UnauthorizedAccess;
 import com.asiczen.api.attendancemgmt.model.ERole;
+import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.Role;
 import com.asiczen.api.attendancemgmt.model.User;
+import com.asiczen.api.attendancemgmt.payload.request.LoginRequest;
 import com.asiczen.api.attendancemgmt.payload.request.UserRoleChangeRequest;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
@@ -27,6 +30,9 @@ public class AuthService {
 
 	@Autowired
 	RoleRepository roleRepository;
+
+	@Autowired
+	EmpServiceImpl employeeService;
 
 	public User updatedUser(UserRoleChangeRequest request) {
 
@@ -72,4 +78,17 @@ public class AuthService {
 		return userRepository.save(user);
 	}
 
+	public boolean validateUser(LoginRequest request) {
+
+		User user = userRepository.findByUsername(request.getUsername())
+				.orElseThrow(() -> new UnauthorizedAccess("Unauthorized access"));
+
+		Employee emp = employeeService.findByEmailid(user.getEmail());
+		
+		if(emp.isEmpStatus()) {
+			throw new UnauthorizedAccess("Account has been disabled.");
+		} else {
+			return true;
+		}
+	}
 }

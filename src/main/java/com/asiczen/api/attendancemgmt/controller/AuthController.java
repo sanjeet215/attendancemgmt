@@ -89,6 +89,9 @@ public class AuthController {
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+		/* Check if Employee is active or In active from userName. then allow to login or disallow */
+		authService.validateUser(loginRequest);
+		
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
