@@ -206,7 +206,7 @@ public class AuthController {
 			response.setUsername(item.getUsername());
 			response.setRoles(item.getRoles());
 			response.setOrgId(item.getOrgId());
-			response.setEmail(employeeService.findByEmailid(item.getEmail()).getEmpId());
+			response.setEmpId(employeeService.findByEmailid(item.getEmail()).getEmpId());
 
 			responseList.add(response);
 		});
