@@ -62,6 +62,10 @@ public class EmployeeController {
 	@Value("${emp.image.upload-dir}")
 	private String fileBasePath;
 
+	
+	@Value("${emp.image.url}")
+	private String imageUrl;
+	
 	@PostMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody EmployeeRequest employee) {
@@ -194,8 +198,10 @@ public class EmployeeController {
 
 		Path fileStorageLocation = Paths.get(fileBasePath);
 		String fileName = storageService.storeFile(file, orgId + "." + empId, fileStorageLocation);
-		empService.updateImageUrl(orgId, empId, fileName);
+		empService.updateImageUrl(orgId, empId, imageUrl+fileName);
 
+		
+		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse(HttpStatus.OK.value(), "image uploaded successfully", fileName));
 	}
