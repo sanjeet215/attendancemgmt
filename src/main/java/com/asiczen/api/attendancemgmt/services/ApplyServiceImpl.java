@@ -16,11 +16,14 @@ import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.exception.StatusAlreadyApproved;
 import com.asiczen.api.attendancemgmt.exception.UnauthorizedAccess;
 import com.asiczen.api.attendancemgmt.model.AppliedLeaves;
+import com.asiczen.api.attendancemgmt.model.ERole;
+import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.LeaveTypes;
 import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.response.LeaveBalance;
 import com.asiczen.api.attendancemgmt.payload.response.LeaveBalanceResponse;
 import com.asiczen.api.attendancemgmt.repository.ApplyLeaveRepository;
+import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 import com.asiczen.api.attendancemgmt.repository.LeaveTypesReposiory;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 
@@ -41,13 +44,17 @@ public class ApplyServiceImpl {
 	@Autowired
 	EmailServiceImpl mailService;
 
+	@Autowired
+	EmployeeRepository empRepo;
+
 	public AppliedLeaves postLeaves(AppliedLeaves appliedLeave) {
 
 		int quantity = 0;
 
 		/* Quantity calculation starts */
 
-		for (LocalDate date = appliedLeave.getFromDate(); date.isBefore(appliedLeave.getToDate()); date = date.plusDays(1)) {
+		for (LocalDate date = appliedLeave.getFromDate(); date
+				.isBefore(appliedLeave.getToDate()); date = date.plusDays(1)) {
 
 			if (date.getDayOfWeek() == DayOfWeek.SATURDAY) {
 
@@ -73,13 +80,19 @@ public class ApplyServiceImpl {
 		appliedLeave.setQuantity(quantity);
 
 		/* Quantity calculation ends */
-		
-		
+
 		List<String> emailList = new ArrayList<String>();
 
 		Optional<List<User>> moderators = userRepo.findByorgId(appliedLeave.getOrgId());
+
 		if (moderators.isPresent()) {
-			moderators.get().forEach(item -> emailList.add(item.getEmail()));
+			moderators.get().forEach(item -> {
+				item.getRoles().forEach(role -> {
+					if (role.getName().compareTo(ERole.ROLE_MODERATOR) == 0) {
+						emailList.add(item.getEmail());
+					}
+				});
+			});
 		}
 
 		emailList.forEach(item -> {
@@ -112,6 +125,7 @@ public class ApplyServiceImpl {
 		} else if (leave.get().getStatus().equalsIgnoreCase("PENDING")) {
 			leave.get().setStatus(appliedLeave.getStatus());
 			leave.get().setComments(appliedLeave.getComments());
+			sendEmailonStatuschange(appliedLeave);
 		} else {
 			throw new StatusAlreadyApproved("Request is already approved");
 		}
@@ -120,6 +134,16 @@ public class ApplyServiceImpl {
 		// Check access level based on orgid
 
 		return appliedLeavesRepo.save(leave.get());
+	}
+
+	private void sendEmailonStatuschange(AppliedLeaves appliedLeave) {
+
+		// Get Employee email id
+		Employee emp = empRepo.findByempId(appliedLeave.getEmpId())
+				.orElseThrow(() -> new ResourceNotFoundException("Employee id not present is DB"));
+		mailService.emailData("asiczen.com", emp.getEmpEmailId(),
+				"You leave reqquest is " + appliedLeave.getStatus() + "\n" + appliedLeave.getComments(),
+				"Leave Request " + appliedLeave.getStatus());
 	}
 
 	public List<AppliedLeaves> getLeaveswithStatus(String orgId, String empId, String status) {
