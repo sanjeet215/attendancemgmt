@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -28,11 +29,13 @@ public class Empinout extends AuditModel {
 	@Size(min = 5, max = 10, message = "empId should be between 5 to 10 characters")
 	private String empId;
 
-	private Date timeStamp;
+	private LocalDateTime timeStamp;
 
 	@NotEmpty(message = "type is required/Can't be blank")
 	@Size(min = 2, max = 3, message = "type should be between 2 to 3 characters")
 	private String type;
+
+	private boolean active;
 
 	public Empinout() {
 		super();
@@ -41,13 +44,15 @@ public class Empinout extends AuditModel {
 	public Empinout(
 			@NotEmpty(message = "Organization Id is required/Can't be blank") @Size(min = 5, max = 10, message = "orgId should be between 5 to 10 characters") String orgId,
 			@NotEmpty(message = "Emp Id is required/Can't be blank") @Size(min = 5, max = 10, message = "empId should be between 5 to 10 characters") String empId,
-			Date timeStamp,
-			@NotEmpty(message = "type is required/Can't be blank") @Size(min = 2, max = 3, message = "type should be between 2 to 3 characters") String type) {
+			LocalDateTime timeStamp,
+			@NotEmpty(message = "type is required/Can't be blank") @Size(min = 2, max = 3, message = "type should be between 2 to 3 characters") String type,
+			boolean active) {
 		super();
 		this.orgId = orgId;
 		this.empId = empId;
 		this.timeStamp = timeStamp;
 		this.type = type;
+		this.active = active;
 	}
 
 	public Long getId() {
@@ -74,11 +79,11 @@ public class Empinout extends AuditModel {
 		this.empId = empId;
 	}
 
-	public Date getTimeStamp() {
+	public LocalDateTime getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(Date timeStamp) {
+	public void setTimeStamp(LocalDateTime timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
@@ -90,10 +95,18 @@ public class Empinout extends AuditModel {
 		this.type = type;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public String toString() {
 		return "Empinout [id=" + id + ", orgId=" + orgId + ", empId=" + empId + ", timeStamp=" + timeStamp + ", type="
-				+ type + "]";
+				+ type + ", active=" + active + "]";
 	}
 
 }

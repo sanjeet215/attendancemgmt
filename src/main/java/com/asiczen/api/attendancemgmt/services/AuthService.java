@@ -85,7 +85,7 @@ public class AuthService {
 
 		Employee emp = employeeService.findByEmailid(user.getEmail());
 		
-		if(emp.isEmpStatus()) {
+		if(!emp.isEmpStatus()) {
 			throw new UnauthorizedAccess("Account has been disabled.");
 		} else {
 			return true;
