@@ -47,6 +47,7 @@ import com.asiczen.api.attendancemgmt.security.jwt.JwtUtils;
 import com.asiczen.api.attendancemgmt.services.AuthService;
 import com.asiczen.api.attendancemgmt.services.EmailServiceImpl;
 import com.asiczen.api.attendancemgmt.services.EmpServiceImpl;
+import com.asiczen.api.attendancemgmt.services.OrganizationServiceImpl;
 import com.asiczen.api.attendancemgmt.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -86,12 +87,18 @@ public class AuthController {
 	@Autowired
 	AuthService authService;
 
+	@Autowired
+	OrganizationServiceImpl orgService;
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-		/* Check if Employee is active or In active from userName. then allow to login or disallow */
+		/*
+		 * Check if Employee is active or In active from userName. then allow to login
+		 * or disallow
+		 */
 		authService.validateUser(loginRequest);
-		
+
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -105,11 +112,12 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse(HttpStatus.OK.value(), "User validate Successfully",
 						new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(),
-								roles, userDetails.getOrgId())));
+								roles, userDetails.getOrgId(),
+								orgService.getOrganizationByid(userDetails.getOrgId()).getOrgLogo())));
 	}
 
 	@PostMapping("/signup")
-	// @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
 		if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
@@ -214,8 +222,8 @@ public class AuthController {
 			responseList.add(response);
 		});
 
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Users extracted for organization", responseList));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ApiResponse(HttpStatus.OK.value(), "Users extracted for organization", responseList));
 
 	}
 

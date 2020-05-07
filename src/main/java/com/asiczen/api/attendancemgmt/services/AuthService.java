@@ -13,10 +13,12 @@ import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.exception.UnauthorizedAccess;
 import com.asiczen.api.attendancemgmt.model.ERole;
 import com.asiczen.api.attendancemgmt.model.Employee;
+import com.asiczen.api.attendancemgmt.model.Organization;
 import com.asiczen.api.attendancemgmt.model.Role;
 import com.asiczen.api.attendancemgmt.model.User;
 import com.asiczen.api.attendancemgmt.payload.request.LoginRequest;
 import com.asiczen.api.attendancemgmt.payload.request.UserRoleChangeRequest;
+import com.asiczen.api.attendancemgmt.repository.OrganizationRepository;
 import com.asiczen.api.attendancemgmt.repository.RoleRepository;
 import com.asiczen.api.attendancemgmt.repository.UserRepository;
 
@@ -33,6 +35,9 @@ public class AuthService {
 
 	@Autowired
 	EmpServiceImpl employeeService;
+
+	@Autowired
+	OrganizationRepository orgRepo;
 
 	public User updatedUser(UserRoleChangeRequest request) {
 
@@ -78,14 +83,29 @@ public class AuthService {
 		return userRepository.save(user);
 	}
 
+	public boolean validateOrganiation(User user) {
+
+		Organization org = orgRepo.findByorganizationDisplayName(user.getOrgId())
+				.orElseThrow(() -> new UnauthorizedAccess("Unauthorized access"));
+
+		if (org.getStatus().equalsIgnoreCase("true")) {
+			logger.info("Orgnization id is active.");
+			return true;
+		} else {
+			throw new UnauthorizedAccess("Account has been disabled.");
+		}
+	}
+
 	public boolean validateUser(LoginRequest request) {
 
 		User user = userRepository.findByUsername(request.getUsername())
 				.orElseThrow(() -> new UnauthorizedAccess("Unauthorized access"));
 
+		validateOrganiation(user);
+
 		Employee emp = employeeService.findByEmailid(user.getEmail());
-		
-		if(!emp.isEmpStatus()) {
+
+		if (!emp.isEmpStatus()) {
 			throw new UnauthorizedAccess("Account has been disabled.");
 		} else {
 			return true;

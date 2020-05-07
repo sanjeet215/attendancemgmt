@@ -10,8 +10,10 @@ public class JwtResponse {
 	private String email;
 	private List<String> roles;
 	private String orgId;
+	private String imageUrl;
 
-	public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles,String orgId) {
+	public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles, String orgId,
+			String imageUrl) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
@@ -71,6 +73,13 @@ public class JwtResponse {
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
 	}
-	
-	
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 }

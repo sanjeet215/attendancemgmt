@@ -24,7 +24,7 @@ public class Organization extends AuditModel {
 
 	@Size(min = 5, max = 10, message = "organizationDisplayName should be between 5 to 10 characters")
 	@NotEmpty(message = "organizationDisplayName is required/Can't be blank")
-	@Column(name = "organizationDisplayName",unique=true)
+	@Column(name = "organizationDisplayName", unique = true)
 	@Pattern(regexp = "^[\\S]*$")
 	private String organizationDisplayName;
 
@@ -32,7 +32,7 @@ public class Organization extends AuditModel {
 	@NotEmpty(message = "organizationDescription is required/Can't be blank")
 	private String organizationDescription;
 
-	@Size(min = 2, max = 50, message = "organizationLocation should be between 2 to 50 characters")
+	@Size(min = 1, max = 50, message = "organizationLocation should be between 2 to 50 characters")
 	@NotEmpty(message = "organizationLocation is required/Can't be blank")
 	private String organizationLocation;
 
@@ -57,6 +57,8 @@ public class Organization extends AuditModel {
 	private String status;
 
 	private String regDate;
+
+	private String orgLogo;
 
 	public Organization() {
 		super();
@@ -132,6 +134,14 @@ public class Organization extends AuditModel {
 
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
+	}
+
+	public String getOrgLogo() {
+		return orgLogo;
+	}
+
+	public void setOrgLogo(String orgLogo) {
+		this.orgLogo = orgLogo;
 	}
 
 	@Override
