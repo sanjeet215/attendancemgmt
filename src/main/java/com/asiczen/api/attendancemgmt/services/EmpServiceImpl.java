@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.asiczen.api.attendancemgmt.exception.ResourceAlreadyExistException;
 import com.asiczen.api.attendancemgmt.exception.ResourceNotFoundException;
 import com.asiczen.api.attendancemgmt.model.Department;
+import com.asiczen.api.attendancemgmt.model.ERole;
 import com.asiczen.api.attendancemgmt.model.Employee;
 import com.asiczen.api.attendancemgmt.model.Organization;
 import com.asiczen.api.attendancemgmt.payload.request.EmployeeRequest;
@@ -21,6 +22,7 @@ import com.asiczen.api.attendancemgmt.payload.response.EmployeeByOrgResponse;
 import com.asiczen.api.attendancemgmt.repository.DepartmentRepository;
 import com.asiczen.api.attendancemgmt.repository.EmployeeRepository;
 import com.asiczen.api.attendancemgmt.repository.OrganizationRepository;
+import com.asiczen.api.attendancemgmt.repository.UserRepository;
 
 @Service
 public class EmpServiceImpl {
@@ -36,13 +38,35 @@ public class EmpServiceImpl {
 	@Autowired
 	DepartmentRepository deptRepo;
 
+	@Autowired
+	UserRepository userRepo;
+
 	/* Get All Employees */
 	public List<Employee> getAllEmployees() {
+
+		List<Employee> emplist = new ArrayList<>();
 
 		if (empRepo.findAll().isEmpty()) {
 			throw new ResourceNotFoundException("There are no employees Present in DB");
 		} else {
-			return empRepo.findAll();
+
+			empRepo.findAll().forEach(item -> {
+				userRepo.findByEmail(item.getEmpEmailId()).ifPresent(user -> {
+					user.getRoles().forEach(role -> {
+						if ((role.getName().compareTo(ERole.ROLE_MODERATOR) == 0)
+								|| (role.getName().compareTo(ERole.ROLE_ADMIN) == 0)) {
+							emplist.add(item);
+						}
+					});
+				});
+			});
+
+			if (emplist.isEmpty()) {
+				return empRepo.findAll();
+			} else {
+				return emplist;
+			}
+
 		}
 	}
 

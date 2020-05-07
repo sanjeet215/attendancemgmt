@@ -79,14 +79,14 @@ public class EmployeeController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> getAllEmployees() {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Organization Created Successfully", empService.getAllEmployees()));
+				"Employees extracted Successfully", empService.getAllEmployees()));
 	}
 
 	@GetMapping("/empbyorg")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> getEmployeesByOrg(@Valid @RequestParam String orgId) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Organization Created Successfully", empService.getEmployeeByOrganization(orgId)));
+				"employee by organization extracted successfully", empService.getEmployeeByOrganization(orgId)));
 	}
 
 	/* Update Employee */
@@ -197,7 +197,7 @@ public class EmployeeController {
 			@Valid @RequestParam("empId") String empId, @Valid @RequestParam("file") MultipartFile file) {
 
 		Path fileStorageLocation = Paths.get(fileBasePath);
-		String fileName = storageService.storeFile(file, orgId + "." + empId, fileStorageLocation);
+		String fileName = storageService.storeImage(file, orgId + "." + empId, fileStorageLocation);
 		empService.updateImageUrl(orgId, empId, imageUrl+fileName);
 
 		

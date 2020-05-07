@@ -97,11 +97,11 @@ public class OrganizationController {
 												  @Valid @RequestParam("file") MultipartFile file){
 		
 		Path fileStorageLocation = Paths.get(fileBasePath);
-		storageService.storeFile(file, orgId, fileStorageLocation);
+		//storageService.storeImage(file, orgId, fileStorageLocation);
 		
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 																						"image uploaded successfully",
-																						storageService.storeFile(file, orgId, fileStorageLocation)));
+																						storageService.storeImage(file, orgId, fileStorageLocation)));
 	}
 }

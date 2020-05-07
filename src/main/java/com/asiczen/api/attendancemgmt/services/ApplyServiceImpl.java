@@ -81,7 +81,7 @@ public class ApplyServiceImpl {
 
 		/* Quantity calculation ends */
 
-		List<String> emailList = new ArrayList<String>();
+		List<String> emailList = new ArrayList<>();
 
 		Optional<List<User>> moderators = userRepo.findByorgId(appliedLeave.getOrgId());
 

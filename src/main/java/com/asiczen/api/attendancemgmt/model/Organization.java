@@ -32,7 +32,7 @@ public class Organization extends AuditModel {
 	@NotEmpty(message = "organizationDescription is required/Can't be blank")
 	private String organizationDescription;
 
-	@Size(min = 5, max = 50, message = "organizationLocation should be between 5 to 50 characters")
+	@Size(min = 2, max = 50, message = "organizationLocation should be between 2 to 50 characters")
 	@NotEmpty(message = "organizationLocation is required/Can't be blank")
 	private String organizationLocation;
 
