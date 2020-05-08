@@ -181,8 +181,8 @@ public class AuthController {
 		emp.setEmpId(signUpRequest.getEmpId());
 		emp.setOrgId(signUpRequest.getOrgId());
 		emp.setPhoneNo(signUpRequest.getPhoneNo());
-		emp.setEmpFirstName(signUpRequest.getEmpfName());
-		emp.setEmpLsatName(signUpRequest.getEmpLname());
+		emp.setEmpFirstName(signUpRequest.getEmpFirstName());
+		emp.setEmpLsatName(signUpRequest.getEmpLsatName());
 		emp.setEmpStatus(true);
 		employeeService.addNewEmployee(emp);
 

@@ -38,11 +38,11 @@ public class SignupRequest {
 
 	@NotEmpty(message = "First Name can't be blank")
 	@Size(min = 1, max = 16, message = "first name should be between 1 to 16 characters")
-	private String empfName;
+	private String empFirstName;
 
 	@NotEmpty(message = "Last Name can't be blank")
 	@Size(min = 1, max = 16, message = "last name should be between 1 to 16 characters")
-	private String empLname;
+	private String empLsatName;
 
 	public SignupRequest() {
 		super();
@@ -104,20 +104,20 @@ public class SignupRequest {
 		this.phoneNo = phoneNo;
 	}
 
-	public String getEmpfName() {
-		return empfName;
+	public String getEmpFirstName() {
+		return empFirstName;
 	}
 
-	public void setEmpfName(String empfName) {
-		this.empfName = empfName;
+	public void setEmpFirstName(String empFirstName) {
+		this.empFirstName = empFirstName;
 	}
 
-	public String getEmpLname() {
-		return empLname;
+	public String getEmpLsatName() {
+		return empLsatName;
 	}
 
-	public void setEmpLname(String empLname) {
-		this.empLname = empLname;
+	public void setEmpLsatName(String empLsatName) {
+		this.empLsatName = empLsatName;
 	}
 
 	@Override
