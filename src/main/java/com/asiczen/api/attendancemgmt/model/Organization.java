@@ -41,7 +41,7 @@ public class Organization extends AuditModel {
 	private String contactPersonName;
 
 	@NotEmpty(message = "contactEmailId is required/Can't be blank")
-	@Size(min = 5, max = 50, message = "contactEmailId should be between 5 to 50 characters")
+	@Size(min = 2, max = 50, message = "contactEmailId should be between 5 to 50 characters")
 	@Column(name = "contactEmailId", unique = true, nullable = false, length = 50)
 	@Pattern(regexp = "^(.+)@(.+)$", message = "Email Id is invalid")
 	@Email

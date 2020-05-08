@@ -112,11 +112,11 @@ public class TestController {
 		Employee emp = new Employee();
 		
 		emp.setEmpEmailId("dummy@gmail.com");
-		emp.setEmpFirstName("dummy");
 		emp.setEmpId("dummy");
 		emp.setOrgId("dummy");
 		emp.setPhoneNo("9999999999");
-		emp.setEmpLsatName("LastName");
+		emp.setEmpLsatName("dummyLastName");
+		emp.setEmpFirstName("dummyFirstName");
 		emp.setEmpStatus(true);
 		
 		employeeService.addNewEmployee(emp);
