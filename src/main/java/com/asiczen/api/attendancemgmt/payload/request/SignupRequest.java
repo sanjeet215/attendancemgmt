@@ -36,6 +36,14 @@ public class SignupRequest {
 	@Column(name = "empPhoneNo", unique = true, nullable = false)
 	private String phoneNo;
 
+	@NotEmpty(message = "First Name can't be blank")
+	@Size(min = 1, max = 16, message = "first name should be between 1 to 16 characters")
+	private String empfName;
+
+	@NotEmpty(message = "Last Name can't be blank")
+	@Size(min = 1, max = 16, message = "last name should be between 1 to 16 characters")
+	private String empLname;
+
 	public SignupRequest() {
 		super();
 	}
@@ -94,6 +102,22 @@ public class SignupRequest {
 
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+
+	public String getEmpfName() {
+		return empfName;
+	}
+
+	public void setEmpfName(String empfName) {
+		this.empfName = empfName;
+	}
+
+	public String getEmpLname() {
+		return empLname;
+	}
+
+	public void setEmpLname(String empLname) {
+		this.empLname = empLname;
 	}
 
 	@Override

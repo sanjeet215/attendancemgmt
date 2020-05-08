@@ -111,13 +111,16 @@ public class AuthController {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse(HttpStatus.OK.value(), "User validate Successfully",
-						new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(),
-								roles, userDetails.getOrgId(),
-								orgService.getOrganizationByid(userDetails.getOrgId()).getOrgLogo())));
+						new JwtResponse(jwt, userDetails.getId(), 
+											 userDetails.getUsername(), 
+											 userDetails.getEmail(),
+											 roles, 
+											 userDetails.getOrgId(),
+											 orgService.getOrganizationByid(userDetails.getOrgId()).getOrgLogo())));
 	}
 
 	@PostMapping("/signup")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	//@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
 		if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
@@ -175,11 +178,11 @@ public class AuthController {
 		Employee emp = new Employee();
 
 		emp.setEmpEmailId(signUpRequest.getEmail());
-		emp.setEmpFirstName(signUpRequest.getUsername());
 		emp.setEmpId(signUpRequest.getEmpId());
 		emp.setOrgId(signUpRequest.getOrgId());
 		emp.setPhoneNo(signUpRequest.getPhoneNo());
-		emp.setEmpLsatName("LastName");
+		emp.setEmpFirstName(signUpRequest.getEmpfName());
+		emp.setEmpLsatName(signUpRequest.getEmpLname());
 		emp.setEmpStatus(true);
 		employeeService.addNewEmployee(emp);
 
