@@ -104,14 +104,14 @@ public class DeviceWorkingHoursService {
 		System.out.println("As per Leave Mgmt system");
 		
 		leaveData.forEach((k,v)->{
-			System.out.println(k+"--->"+v);
+			logger.info(k+"--->"+v);
 		});
 		
-		System.out.println("As per Device Mgmt system");
+		logger.info("As per Device Mgmt system");
 		
 		deviceData.forEach((k, v) -> {
 			logger.debug(k.toString(), v);
-			System.out.println(k+"--->"+v);
+			logger.info(k+"--->"+v);
 		});
 
 		
@@ -132,7 +132,7 @@ public class DeviceWorkingHoursService {
 		
 		/* Remove after testing */
 		resultset.forEach(item->{
-			System.out.println(item.toString());
+			logger.info(item.toString());
 		});
 		
 		

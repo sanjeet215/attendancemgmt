@@ -20,6 +20,7 @@ public class JwtResponse {
 		this.email = email;
 		this.roles = roles;
 		this.orgId = orgId;
+		this.imageUrl = imageUrl;
 	}
 
 	public String getAccessToken() {

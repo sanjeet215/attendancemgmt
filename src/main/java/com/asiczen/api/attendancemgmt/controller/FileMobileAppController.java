@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.asiczen.api.attendancemgmt.model.LockDetails;
 import com.asiczen.api.attendancemgmt.payload.request.EmployeeSwipeRequest;
 import com.asiczen.api.attendancemgmt.payload.response.ApiResponse;
 import com.asiczen.api.attendancemgmt.services.EmpinoutServicImpl;
 import com.asiczen.api.attendancemgmt.services.FileServiceMobile;
+import com.asiczen.api.attendancemgmt.services.LockService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,20 +44,23 @@ public class FileMobileAppController {
 
 	@Autowired
 	private FileServiceMobile fileStorageService;
-	
+
 	@Autowired
 	private EmpinoutServicImpl empLogService;
-	
+
+	@Autowired
+	LockService lockService;
+
 	@Value("${android.app-dir}")
 	private String fileBasePath;
 
 	@PostMapping("/upload")
 	public ResponseEntity<ApiResponse> uploadToLocalFileSystem(@Valid @RequestParam("file") MultipartFile file,
 			@Valid @RequestParam("orgId") String orgId) {
-		
+
 		Path fileStorageLocation = Paths.get(fileBasePath);
-		
-		String fileName = fileStorageService.storeFile(file, orgId,fileStorageLocation);
+
+		String fileName = fileStorageService.storeFile(file, orgId, fileStorageLocation);
 
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
@@ -67,9 +73,9 @@ public class FileMobileAppController {
 	public ResponseEntity<Resource> downloadFile(@RequestParam String orgId, HttpServletRequest request) {
 
 		Path fileStorageLocation = Paths.get(fileBasePath);
-		
-		Resource resource = fileStorageService.loadFileAsResource(orgId,fileStorageLocation);
-		
+
+		Resource resource = fileStorageService.loadFileAsResource(orgId, fileStorageLocation);
+
 		String contentType = null;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -82,49 +88,59 @@ public class FileMobileAppController {
 			contentType = "application/octet-stream";
 		}
 
-
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
-	
-	
+
 	@DeleteMapping("/delete")
-	public ResponseEntity<ApiResponse> deleteFile(@Valid @RequestParam String orgId,@Valid @RequestParam String fileName){
-		
+	public ResponseEntity<ApiResponse> deleteFile(@Valid @RequestParam String orgId,
+			@Valid @RequestParam String fileName) {
+
 		Path fileStorageLocation = Paths.get(fileBasePath);
 		try {
 			fileStorageService.deleteFile(orgId, fileName, fileStorageLocation);
 		} catch (IOException e) {
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-					 "File "+fileName + " can't be removed",
-					 e.getLocalizedMessage()));
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+							"File " + fileName + " can't be removed", e.getLocalizedMessage()));
 		}
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				 														 "File deleted successfully",
-				 														 "File "+fileName + " removed successfully"));
+				"File deleted successfully", "File " + fileName + " removed successfully"));
 	}
-	
-	
+
 	@PostMapping("/empinouttime")
-	public ResponseEntity<ApiResponse> captureLoginLogout(@Valid @RequestBody EmployeeSwipeRequest request){
-		
+	public ResponseEntity<ApiResponse> captureLoginLogout(@Valid @RequestBody EmployeeSwipeRequest request) {
+
 		logger.info(request.toString());
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
-																			 "Record Posted Successfully",
-																			 empLogService.postEmpLoginDetails(request)));
+				"Record Posted Successfully", empLogService.postEmpLoginDetails(request)));
 	}
-	
+
 	@GetMapping("/empinouttime")
 	public ResponseEntity<ApiResponse> getLoginLogoutDetails(@Valid @RequestParam String orgId,
-															 @Valid @RequestParam String empId){
-		
+			@Valid @RequestParam String empId) {
+
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.CREATED.value(),
-				 														 "Record extracted successfully",
-				 														 empLogService.getEmpLoginDetails(orgId, empId)));
+				"Records extracted successfully", empLogService.getEmpLoginDetails(orgId, empId)));
+	}
+
+	@PostMapping("/savelock")
+	public ResponseEntity<ApiResponse> postData(@Valid @RequestBody LockDetails lockDetails) {
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(),
+				"Record extracted successfully", lockService.postDataToRepo(lockDetails)));
+	}
+
+	@GetMapping("/getlock")
+	public ResponseEntity<ApiResponse> getDatabyEmpid(@Valid @RequestParam String email) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.CREATED.value(),
+				"Records extracted successfully", lockService.getMacidsbyEmailId(email)));
+
 	}
 
 }
