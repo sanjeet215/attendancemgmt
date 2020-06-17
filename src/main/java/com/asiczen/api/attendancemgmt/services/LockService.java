@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,9 +60,15 @@ public class LockService {
 			response.setOrgId(dbResponse.get().get(0).getOrgId());
 			response.setEmpId(dbResponse.get().get(0).getEmpId());
 
+			List<String> lockmacid = new ArrayList<>();
+
 			dbResponse.get().forEach(item -> {
-				response.getLockmacid().add(item.getLockmacid());
+				if (!item.getLockmacid().isEmpty()) {
+					lockmacid.add(item.getLockmacid());
+				}
 			});
+
+			response.setLockmacid(lockmacid);
 
 			return response;
 		}
