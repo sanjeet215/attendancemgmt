@@ -62,10 +62,9 @@ public class EmployeeController {
 	@Value("${emp.image.upload-dir}")
 	private String fileBasePath;
 
-	
 	@Value("${emp.image.url}")
 	private String imageUrl;
-	
+
 	@PostMapping("/emp")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> createEmployee(@Valid @RequestBody EmployeeRequest employee) {
@@ -198,10 +197,8 @@ public class EmployeeController {
 
 		Path fileStorageLocation = Paths.get(fileBasePath);
 		String fileName = storageService.storeImage(file, orgId + "." + empId, fileStorageLocation);
-		empService.updateImageUrl(orgId, empId, imageUrl+fileName);
+		empService.updateImageUrl(orgId, empId, imageUrl + fileName);
 
-		
-		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ApiResponse(HttpStatus.OK.value(), "image uploaded successfully", fileName));
 	}
@@ -237,7 +234,7 @@ public class EmployeeController {
 	public ResponseEntity<ApiResponse> postEmployeeSalaryDetails(@Valid @RequestBody EmployeeDetails empDetails) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
-				"Employee salary details updated successfully", empDetailsService.postEmployeeDetails(empDetails)));
+				"Employee salary details posted successfully", empDetailsService.postEmployeeDetails(empDetails)));
 
 	}
 
@@ -260,4 +257,15 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
 				"Employee salary details extracted successfully", empDetailsService.getEmployeeDetails(orgId, empId)));
 	}
+
+	// Update employee details
+	@PutMapping("/updateemp")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+	public ResponseEntity<ApiResponse> updateEmpDetails(@Valid @RequestBody EmployeeDetails empDetails) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(),
+				"Employee salary details updated successfully", empDetailsService.updateEmployeeDetails(empDetails)));
+
+	}
+
 }

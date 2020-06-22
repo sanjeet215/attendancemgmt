@@ -37,8 +37,7 @@ public class OrganizationServiceImpl {
 		Optional<Organization> orgByContactEmailId = orgRepo.findBycontactEmailId(org.getContactEmailId());
 
 		if (orgByContactEmailId.isPresent()) {
-			logger.error(org.getContactEmailId() + " is already taken.Please try a different one.");
-			throw new ResourceAlreadyExistException(org.getContactEmailId());
+			throw new ResourceAlreadyExistException("Email id "+ org.getContactEmailId()+  " is already taken !");
 		}
 
 		Optional<Organization> orgByorganizationcontact = orgRepo
@@ -111,8 +110,9 @@ public class OrganizationServiceImpl {
 	}
 
 	public Organization getOrganizationByid(String orgId) {
-		return orgRepo.findByorganizationDisplayName(orgId).orElseThrow(()-> new ResourceNotFoundException("Organizaton id is not found."));
-		
+		return orgRepo.findByorganizationDisplayName(orgId)
+				.orElseThrow(() -> new ResourceNotFoundException("Organizaton id is not found."));
+
 	}
 
 }

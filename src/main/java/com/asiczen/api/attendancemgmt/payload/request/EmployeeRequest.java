@@ -16,12 +16,12 @@ public class EmployeeRequest {
 	private String empId;
 
 	@NotEmpty(message = "empfname is required/Can't be blank")
-	@Size(min = 1, max = 16, message = "empfname should be between 5 to 10 characters")
+	@Size(min = 1, max = 16, message = "Emp First Name should be between 1 to 16 characters")
 	@Column(name = "empfname", unique = false, nullable = false)
 	private String empFirstName;
 
 	@NotEmpty(message = "emplname is required/Can't be blank")
-	@Size(min = 1, max = 16, message = "emplname should be between 5 to 10 characters")
+	@Size(min = 1, max = 16, message = "Emp Last Name should be between 1 to 16 characters")
 	@Column(name = "emplname")
 	private String empLsatName;
 

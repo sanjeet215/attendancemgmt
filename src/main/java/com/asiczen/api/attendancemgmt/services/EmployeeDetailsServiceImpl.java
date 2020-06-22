@@ -29,13 +29,16 @@ public class EmployeeDetailsServiceImpl {
 	/* Post Employee Details */
 	public EmployeeDetails postEmployeeDetails(EmployeeDetails employeeDetails) {
 
-		Optional<Employee> employee = empRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),employeeDetails.getEmpId());
+		Optional<Employee> employee = empRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),
+				employeeDetails.getEmpId());
 
 		if (!employee.isPresent()) {
-			throw new ResourceNotFoundException("Employee not Found with empId and OrgID "+employeeDetails.getOrgId()+"_"+employeeDetails.getEmpId());
+			throw new ResourceNotFoundException("Employee not Found with empId and OrgID " + employeeDetails.getOrgId()
+					+ "_" + employeeDetails.getEmpId());
 		}
 
-		Optional<EmployeeDetails> empDetails = empDetailsRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),employeeDetails.getEmpId());
+		Optional<EmployeeDetails> empDetails = empDetailsRepo.findByOrgIdAndEmpId(employeeDetails.getOrgId(),
+				employeeDetails.getEmpId());
 
 		if (empDetails.isPresent()) {
 			throw new ResourceAlreadyExistException("Record with Empid and OrgID already present.Please try to update");
@@ -71,5 +74,44 @@ public class EmployeeDetailsServiceImpl {
 	}
 
 	/* Update Employee Details */
+
+	public EmployeeDetails updateEmployeeDetails(EmployeeDetails newemployeeDetails) {
+
+		// 1. Find Employee
+		Optional<Employee> employee = empRepo.findByOrgIdAndEmpId(newemployeeDetails.getOrgId(),
+				newemployeeDetails.getEmpId());
+
+		
+		// 2. Not present throw error
+		if (!employee.isPresent()) {
+			throw new ResourceNotFoundException("Employee not Found with empId and OrgID "
+					+ newemployeeDetails.getOrgId() + "_" + newemployeeDetails.getEmpId());
+		}
+
+		Optional<EmployeeDetails> empDetails = empDetailsRepo.findByOrgIdAndEmpId(newemployeeDetails.getOrgId(),
+				newemployeeDetails.getEmpId());
+
+		EmployeeDetails empdtls = new EmployeeDetails();
+
+		if (empDetails.isPresent()) {
+			empdtls = empDetails.get();
+		}
+
+		if (empDetails.isPresent()) {
+			// update goes here
+
+			empdtls.setEpsNo(newemployeeDetails.getEpsNo());
+			empdtls.setEsiNo(newemployeeDetails.getEsiNo());
+			empdtls.setGrade(newemployeeDetails.getGrade());
+			empdtls.setPanNo(newemployeeDetails.getPanNo());
+			empdtls.setUanNo(newemployeeDetails.getUanNo());
+			empdtls.setPfNo(newemployeeDetails.getPfNo());
+		} else {
+			throw new ResourceNotFoundException("Record with Empid and OrgID doesn't exist.Please try to update");
+		}
+
+		return empDetailsRepo.save(empdtls);
+
+	}
 
 }
