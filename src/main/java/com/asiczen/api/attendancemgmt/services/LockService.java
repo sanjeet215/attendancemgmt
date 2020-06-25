@@ -3,6 +3,8 @@ package com.asiczen.api.attendancemgmt.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,62 @@ public class LockService {
 		if (!employee.isPresent()) {
 			throw new ResourceNotFoundException(
 					"Employee not Found with empId and OrgID " + lockDetails.getOrgId() + "_" + lockDetails.getEmpId());
+		}
+
+		/*
+		 * Step 2 check if employee is already registered with another emp id using emil
+		 * id
+		 */
+
+		Optional<List<LockDetails>> lockrecords = lockRepo.findByemail(lockDetails.getEmail());
+
+		if (lockrecords.isPresent()) {
+
+			List<String> distinctEmpidsbyEmailid = lockrecords.get().stream().map(item -> item.getEmpId())
+					.collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+
+			long distinctEmpidcount = distinctEmpidsbyEmailid.stream().count();
+
+			if (distinctEmpidcount > 1) {
+				throw new ResourceAlreadyExistException("Employee id is already registerd with another emp emailid.");
+			} else {
+				if (distinctEmpidsbyEmailid.get(0).equalsIgnoreCase(lockDetails.getEmpId())) {
+					// Should be ok , can register as incoming emp id and db emp (already registered
+					// record) id are same.
+				} else {
+					throw new ResourceAlreadyExistException(
+							"Email id is already registered with empid " + distinctEmpidsbyEmailid.get(0));
+				}
+			}
+
+		} else {
+			// skip
+		}
+
+		/* Step 3 check if registered email ids are unique against any other empid */
+
+		Optional<List<LockDetails>> records = lockRepo.findByempId(lockDetails.getEmpId());
+
+		if (records.isPresent()) {
+
+			List<String> distinctEmpidsbyEmailid = records.get().stream().map(item -> item.getEmail())
+					.collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+
+			long distinctEmailidCount = distinctEmpidsbyEmailid.stream().count();
+
+			if (distinctEmailidCount > 1) {
+				throw new ResourceAlreadyExistException("Email id already registered with another empid");
+			} else {
+				if (distinctEmpidsbyEmailid.get(0).equalsIgnoreCase(lockDetails.getEmail())) {
+
+				} else {
+					throw new ResourceAlreadyExistException(
+							"Email id is already registered with empid -->" + lockDetails.getEmpId());
+				}
+			}
+
+		} else {
+			// proceed to save records
 		}
 
 		Optional<LockDetails> lockdetails = lockRepo.findByOrgIdAndEmpIdAndLockmacid(lockDetails.getOrgId(),

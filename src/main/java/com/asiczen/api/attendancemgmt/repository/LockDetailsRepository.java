@@ -12,4 +12,6 @@ public interface LockDetailsRepository extends JpaRepository<LockDetails, Long> 
 	Optional<LockDetails> findByOrgIdAndEmpIdAndLockmacid(String orgid, String empid, String macid);
 
 	Optional<List<LockDetails>> findByemail(String emailid);
+	
+	Optional<List<LockDetails>> findByempId(String empid);
 }
