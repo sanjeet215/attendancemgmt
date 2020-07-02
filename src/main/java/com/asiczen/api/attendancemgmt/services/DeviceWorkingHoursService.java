@@ -63,19 +63,49 @@ public class DeviceWorkingHoursService {
 
 	}
 
-	/* device working hours by orgid, empid,month and year */
+	public List<DeviceWorkingHoursResponse> getworkinghoursperDevicebyMonthandYear(String orgid, String empid,
+			String month, String year) {
 
-	public List<DeviceWorkingHours> getworkinghoursperDevicebyMonthandYear(String orgid, String empid, String month,
-			String year) {
+		Optional<List<DeviceWorkingHours>> workinhoursList = deviceRepo.findByOrgIdAndEmpIdAndMonthAndYear(orgid, empid,month, year);
 
-		Optional<List<DeviceWorkingHours>> workinhoursList = deviceRepo.findByOrgIdAndEmpIdAndMonthAndYear(orgid, empid,
-				month, year);
 		if (!workinhoursList.isPresent()) {
 			return null;
 		} else {
-			return workinhoursList.get();
+
+			List<DeviceWorkingHoursResponse> response = new ArrayList<>();
+
+			workinhoursList.get().forEach(item -> {
+				DeviceWorkingHoursResponse record = new DeviceWorkingHoursResponse();
+
+				record.setCalculatedhours((float) item.getCalculatedhours() / 60);
+				record.setDate(item.getDate());
+				record.setEmpId(item.getEmpId());
+				record.setMonth(item.getMonth());
+				record.setOrgId(item.getOrgId());
+				record.setRecordId(item.getRecordId());
+				record.setYear(item.getYear());
+				response.add(record);
+			});
+
+			return response;
 		}
 	}
+
+	/* device working hours by orgid, empid,month and year */
+
+	// public List<DeviceWorkingHours> getworkinghoursperDevicebyMonthandYear(String
+	// orgid, String empid, String month,
+	// String year) {
+	//
+	// Optional<List<DeviceWorkingHours>> workinhoursList =
+	// deviceRepo.findByOrgIdAndEmpIdAndMonthAndYear(orgid, empid,
+	// month, year);
+	// if (!workinhoursList.isPresent()) {
+	// return null;
+	// } else {
+	// return workinhoursList.get();
+	// }
+	// }
 
 	/* This method is to compare between leave management system vs device data */
 
