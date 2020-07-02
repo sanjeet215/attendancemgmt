@@ -42,7 +42,7 @@ public class AttendanceController {
 	}
 
 	@GetMapping("/workinghours")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
 	public ResponseEntity<ApiResponse> getDeviceWorkinghours(@Valid @RequestParam String orgId,
 			@Valid @RequestParam String empId, @Valid @RequestParam(required = false) String month,
 			@Valid @RequestParam(required = false) String year) {
@@ -65,7 +65,7 @@ public class AttendanceController {
 	
 	
 	@GetMapping("/recondata")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('user')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
 	public ResponseEntity<ApiResponse> generateReconData(@Valid @RequestParam String orgId,
 														 @Valid @RequestParam String empId,
 														 @Valid @RequestParam String month,
