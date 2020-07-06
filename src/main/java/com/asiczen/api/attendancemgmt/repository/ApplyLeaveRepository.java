@@ -23,23 +23,23 @@ public interface ApplyLeaveRepository extends JpaRepository<AppliedLeaves,Long>{
 	Optional<List<AppliedLeaves>> findByOrgIdAndStatus(String orgId,String status);
 	
 	
-	@Query(value = "SELECT sum(appliedleaves.quantity) availedLeaves,\r\n" + 
-			"	   leavetypes.quantity availableLeaves,\r\n" + 
-			"       leavetypes.quantity-sum(appliedleaves.quantity) as balance,\r\n" + 
-			"	   appliedleaves.leave_type_name,\r\n" + 
-			"       appliedleaves.empid,\r\n" + 
-			"       appliedleaves.orgid,\r\n" + 
-			"       appliedleaves.status\r\n" + 
-			"from appliedleaves , leavetypes\r\n" + 
-			"where appliedleaves.orgid = 'finalcase1'\r\n" + 
-			"  and appliedleaves.empid = 'AZFINAL3'\r\n" + 
-			"  and appliedleaves.orgid = leavetypes.orgid\r\n" + 
-			"  and appliedleaves.leave_type_name = leavetypes.leave_type_name\r\n" + 
-			"  and appliedleaves.status in ('pending','approved')\r\n" + 
-			"	 group by appliedleaves.leave_type_name,\r\n" + 
-			"			  appliedleaves.empid,\r\n" + 
-			"              appliedleaves.orgid",nativeQuery = true)
-	Optional<List<AvailedLeaveResponse>> findLeaveHistory();
+//	@Query(value = "SELECT sum(appliedleaves.quantity) availedLeaves,\r\n" + 
+//			"	   leavetypes.quantity availableLeaves,\r\n" + 
+//			"       leavetypes.quantity-sum(appliedleaves.quantity) as balance,\r\n" + 
+//			"	   appliedleaves.leave_type_name,\r\n" + 
+//			"       appliedleaves.empid,\r\n" + 
+//			"       appliedleaves.orgid,\r\n" + 
+//			"       appliedleaves.status\r\n" + 
+//			"from appliedleaves , leavetypes\r\n" + 
+//			"where appliedleaves.orgid = 'finalcase1'\r\n" + 
+//			"  and appliedleaves.empid = 'AZFINAL3'\r\n" + 
+//			"  and appliedleaves.orgid = leavetypes.orgid\r\n" + 
+//			"  and appliedleaves.leave_type_name = leavetypes.leave_type_name\r\n" + 
+//			"  and appliedleaves.status in ('pending','approved')\r\n" + 
+//			"	 group by appliedleaves.leave_type_name,\r\n" + 
+//			"			  appliedleaves.empid,\r\n" + 
+//			"              appliedleaves.orgid",nativeQuery = true)
+//	Optional<List<AvailedLeaveResponse>> findLeaveHistory();
 	
 	
 	

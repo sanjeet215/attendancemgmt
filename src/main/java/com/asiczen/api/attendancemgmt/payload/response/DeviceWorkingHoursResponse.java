@@ -18,7 +18,7 @@ public class DeviceWorkingHoursResponse {
 
 	private Date date;
 
-	private Float calculatedhours;
+	private Double calculatedhours;
 
 	private String month;
 
@@ -26,18 +26,6 @@ public class DeviceWorkingHoursResponse {
 
 	public DeviceWorkingHoursResponse() {
 		super();
-	}
-
-	public DeviceWorkingHoursResponse(Long recordId, String empId, String orgId, Date date, Float calculatedhours,
-			String month, String year) {
-		super();
-		this.recordId = recordId;
-		this.empId = empId;
-		this.orgId = orgId;
-		this.date = date;
-		this.calculatedhours = calculatedhours;
-		this.month = month;
-		this.year = year;
 	}
 
 	public Long getRecordId() {
@@ -72,11 +60,11 @@ public class DeviceWorkingHoursResponse {
 		this.date = date;
 	}
 
-	public Float getCalculatedhours() {
+	public Double getCalculatedhours() {
 		return calculatedhours;
 	}
 
-	public void setCalculatedhours(Float calculatedhours) {
+	public void setCalculatedhours(Double calculatedhours) {
 		this.calculatedhours = calculatedhours;
 	}
 

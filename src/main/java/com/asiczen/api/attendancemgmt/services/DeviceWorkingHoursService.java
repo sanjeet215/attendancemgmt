@@ -1,5 +1,6 @@
 package com.asiczen.api.attendancemgmt.services;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class DeviceWorkingHoursService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DeviceWorkingHoursService.class);
 
+	private static DecimalFormat df2 = new DecimalFormat("#.##");
+
 	@Autowired
 	DeviceWorkingHoursRepository deviceRepo;
 
@@ -48,7 +51,9 @@ public class DeviceWorkingHoursService {
 			workinhoursList.get().forEach(item -> {
 				DeviceWorkingHoursResponse record = new DeviceWorkingHoursResponse();
 
-				record.setCalculatedhours((float) item.getCalculatedhours() / 60);
+				Double calchours = (double) (item.getCalculatedhours() / 60);
+
+				record.setCalculatedhours(Double.parseDouble(df2.format(calchours)));
 				record.setDate(item.getDate());
 				record.setEmpId(item.getEmpId());
 				record.setMonth(item.getMonth());
@@ -66,7 +71,8 @@ public class DeviceWorkingHoursService {
 	public List<DeviceWorkingHoursResponse> getworkinghoursperDevicebyMonthandYear(String orgid, String empid,
 			String month, String year) {
 
-		Optional<List<DeviceWorkingHours>> workinhoursList = deviceRepo.findByOrgIdAndEmpIdAndMonthAndYear(orgid, empid,month, year);
+		Optional<List<DeviceWorkingHours>> workinhoursList = deviceRepo.findByOrgIdAndEmpIdAndMonthAndYear(orgid, empid,
+				month, year);
 
 		if (!workinhoursList.isPresent()) {
 			return null;
@@ -77,7 +83,9 @@ public class DeviceWorkingHoursService {
 			workinhoursList.get().forEach(item -> {
 				DeviceWorkingHoursResponse record = new DeviceWorkingHoursResponse();
 
-				record.setCalculatedhours((float) item.getCalculatedhours() / 60);
+				Double calchours = (double) (item.getCalculatedhours() / 60);
+
+				record.setCalculatedhours(Double.parseDouble(df2.format(calchours)));
 				record.setDate(item.getDate());
 				record.setEmpId(item.getEmpId());
 				record.setMonth(item.getMonth());

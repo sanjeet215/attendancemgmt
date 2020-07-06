@@ -19,6 +19,7 @@ public class AttendancemgmtApplication extends SpringBootServletInitializer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(AttendancemgmtApplication.class, args);
+		System.setProperty("user.timezone", "Asia/Kolkata");
 	}
 
 }
